@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -15,9 +15,6 @@ const Login = () => (
       }}
       wrapperCol={{
         span: 16,
-      }}
-      initialValues={{
-        remember: false,
       }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
@@ -47,17 +44,6 @@ const Login = () => (
         ]}
       >
         <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{
-          offset: 8,
-          span: 16,
-        }}
-      >
-        <Checkbox>Remember me</Checkbox>
       </Form.Item>
 
       <Form.Item
