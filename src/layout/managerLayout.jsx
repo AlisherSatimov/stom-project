@@ -7,6 +7,7 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Outlet, useNavigate } from "react-router-dom";
 const { Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -17,33 +18,27 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-// const items = [
-//   getItem("Option 1", "1", <PieChartOutlined />),
-//   getItem("Option 2", "2", <DesktopOutlined />),
-//   getItem("User", "sub1", <UserOutlined />, [
-//     getItem("Tom", "3"),
-//     getItem("Bill", "4"),
-//     getItem("Alex", "5"),
-//   ]),
-//   getItem("Team", "sub2", <TeamOutlined />, [
-//     getItem("Team 1", "6"),
-//     getItem("Team 2", "8"),
-//   ]),
-//   getItem("Files", "9", <FileOutlined />),
-// ];
 
 const items = [
   getItem("Dashboard", "dashboard", <DashboardOutlined />),
-  getItem("Clients", "clinets", <TeamOutlined />),
+  getItem("Clients", "clients", <TeamOutlined />),
   getItem("Create Clinet", "createClient", <UserAddOutlined />),
-  getItem("Client ID", "client", <UserOutlined />),
+  getItem("Client ID", "clientID", <UserOutlined />),
   getItem("Notifications", "notifications", <BellOutlined />),
 ];
 const ManagerLayout = () => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const handleMenuClick = (key) => {
+    key === "dashboard" ? navigate("/") : navigate(`/${key}`);
+    sessionStorage.setItem("currentPage", key.toString());
+    console.log(key);
+  };
+
   return (
     <Layout
       style={{
@@ -58,9 +53,12 @@ const ManagerLayout = () => {
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
-          defaultSelectedKeys={["dashboard"]}
+          defaultSelectedKeys={[
+            sessionStorage.getItem("currentPage") || "dashboard",
+          ]}
           mode="inline"
           items={items}
+          onClick={({ key }) => handleMenuClick(key)}
         />
       </Sider>
       <Layout>
@@ -74,8 +72,8 @@ const ManagerLayout = () => {
               margin: "16px 0",
             }}
           >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>{getItem.key}</Breadcrumb.Item>
+            {/* <Breadcrumb.Item>User</Breadcrumb.Item> */}
           </Breadcrumb>
           <div
             style={{
@@ -85,7 +83,7 @@ const ManagerLayout = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            Bill is a cat.
+            {<Outlet />}
           </div>
         </Content>
         <Footer

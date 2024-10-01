@@ -12,3 +12,7 @@
   align-items: center;
   flex-wrap: wrap;
 }
+
+.ant-spin-dot-item {
+  color: white;
+}
