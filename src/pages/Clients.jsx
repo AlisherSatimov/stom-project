@@ -1,5 +1,5 @@
 function Clients() {
-  return <div>Clients</div>;
+  return <div>Clients Page</div>;
 }
 
 export default Clients;
