@@ -5,7 +5,7 @@ import "./index.css";
 
 // Axios
 import axios from "axios";
-axios.defaults.baseURL = "http://185.177.59.64:8085";
+axios.defaults.baseURL = "https://3dclinic.uz:8085";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>

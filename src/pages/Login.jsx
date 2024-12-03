@@ -1,27 +1,34 @@
-import { Button, Form, Input, Spin } from "antd";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Form, Input, Button, Spin } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // const navigate = useNavigate();
-  const handleLogin = async () => {
+  const handleLogin = async (values) => {
     setLoading(true);
+    const { login, password } = values;
     const apiType = "WEB";
 
-    const response = await axios.post("/auth/login", {
-      login,
-      password,
-      apiType,
-    });
-    const data = response.data;
-
-    console.log("data", data);
+    try {
+      const response = await axios.post("/auth/login", {
+        login: login,
+        password: password,
+        apiType: apiType,
+      });
+      const data = response.data;
+      console.log("token:", data);
+    } catch (error) {
+      console.error("Login failed", error);
+    } finally {
+      setLoading(false);
+      navigate("/");
+    }
   };
+
   return (
     <div className="login-form">
       <img src="/logo.png" alt="dental logo" width={400} />
@@ -33,7 +40,7 @@ export const Login = () => {
         wrapperCol={{
           span: 16,
         }}
-        onFinish={handleLogin}
+        onFinish={handleLogin} // The form will pass values here
         autoComplete="off"
       >
         <Form.Item
@@ -46,14 +53,7 @@ export const Login = () => {
             },
           ]}
         >
-          <Input
-            prefix={
-              <UserOutlined
-                className="site-form-item-icon"
-                onChange={(e) => setLogin(e.target.value)}
-              />
-            }
-          />
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} />
         </Form.Item>
 
         <Form.Item
@@ -67,12 +67,7 @@ export const Login = () => {
           ]}
         >
           <Input.Password
-            prefix={
-              <LockOutlined
-                className="site-form-item-icon"
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            }
+            prefix={<LockOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
 
