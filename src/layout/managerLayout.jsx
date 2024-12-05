@@ -71,10 +71,9 @@ const ManagerLayout = () => {
             style={{
               margin: "16px 0",
             }}
-          >
-            <Breadcrumb.Item>{getItem.key}</Breadcrumb.Item>
-            {/* <Breadcrumb.Item>User</Breadcrumb.Item> */}
-          </Breadcrumb>
+            items={[{ title: getItem.key }]}
+          />
+
           <div
             style={{
               padding: 24,

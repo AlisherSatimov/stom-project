@@ -21,11 +21,11 @@ export const Login = () => {
       });
       const data = response.data;
       console.log("token:", data);
+      navigate("/");
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login failed", error.response.data);
     } finally {
       setLoading(false);
-      navigate("/");
     }
   };
 
@@ -40,7 +40,7 @@ export const Login = () => {
         wrapperCol={{
           span: 16,
         }}
-        onFinish={handleLogin} // The form will pass values here
+        onFinish={handleLogin}
         autoComplete="off"
       >
         <Form.Item
