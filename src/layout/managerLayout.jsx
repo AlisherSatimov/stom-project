@@ -28,6 +28,7 @@ const items = [
 ];
 const ManagerLayout = () => {
   const navigate = useNavigate();
+
   const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },

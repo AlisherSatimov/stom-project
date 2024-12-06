@@ -19,8 +19,9 @@ export const Login = () => {
         password: password,
         apiType: apiType,
       });
-      const data = response.data;
-      console.log("token:", data);
+      const aToken = response.data;
+      localStorage.setItem("username", aToken);
+      console.log("token:", aToken);
       navigate("/");
     } catch (error) {
       console.error("Login failed", error.response.data);
