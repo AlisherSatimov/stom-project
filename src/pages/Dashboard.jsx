@@ -92,8 +92,6 @@ export const Dashboard = () => {
   let aToken = localStorage.getItem("aToken");
 
   useEffect(() => {
-    console.log("Component mounted!");
-
     if (aToken) {
       console.log("token mavjud");
     } else {

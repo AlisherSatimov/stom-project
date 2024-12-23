@@ -7,6 +7,8 @@ import {
   BellOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  BellTwoTone,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -23,14 +25,21 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Dashboard", "dashboard", <DashboardOutlined />),
+  getItem("Dashboard", "/", <DashboardOutlined />),
   getItem("Clients", "clients", <TeamOutlined />),
   getItem("Create Clinet", "createClient", <UserAddOutlined />),
   getItem("Client ID", "clientID", <UserOutlined />),
   getItem("Notifications", "notifications", <BellOutlined />),
 ];
+
 const ManagerLayout = () => {
   const navigate = useNavigate();
+
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/login");
+    sessionStorage.setItem("currentPage", "/");
+  };
 
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -38,9 +47,8 @@ const ManagerLayout = () => {
   } = theme.useToken();
 
   const handleMenuClick = (key) => {
-    key === "dashboard" ? navigate("/") : navigate(`/${key}`);
+    key === "/" ? navigate("/") : navigate(`/${key}`);
     sessionStorage.setItem("currentPage", key.toString());
-    console.log(key);
   };
 
   return (
@@ -57,9 +65,7 @@ const ManagerLayout = () => {
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
-          defaultSelectedKeys={[
-            sessionStorage.getItem("currentPage") || "dashboard",
-          ]}
+          defaultSelectedKeys={[sessionStorage.getItem("currentPage") || "/"]}
           mode="inline"
           items={items}
           onClick={({ key }) => handleMenuClick(key)}
@@ -73,6 +79,7 @@ const ManagerLayout = () => {
             borderRadius: borderRadiusLG,
             background: colorBgContainer,
           }}
+          className="flex justify-between items-center"
         >
           <Button
             type="text"
@@ -84,7 +91,21 @@ const ManagerLayout = () => {
               height: 64,
             }}
           />
-          <span>salom</span>
+          <span className="flex">
+            <BellTwoTone
+              className="text-2xl"
+              style={{
+                width: 50,
+              }}
+            />
+            <LogoutOutlined
+              className="text-2xl"
+              onClick={() => handleLogOut()}
+              style={{
+                width: 50,
+              }}
+            />
+          </span>
         </Header>
         <Content
           style={{

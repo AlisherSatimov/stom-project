@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table } from "antd";
 import Highlighter from "react-highlight-words";
@@ -42,6 +42,15 @@ const Clients = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
   const navigate = useNavigate();
+  let aToken = localStorage.getItem("aToken");
+
+  useEffect(() => {
+    if (aToken) {
+      console.log("token mavjud");
+    } else {
+      navigate("/login");
+    }
+  }, [aToken, navigate]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -184,7 +193,6 @@ const Clients = () => {
       key: "address",
       width: "30%",
       ...getColumnSearchProps("address"),
-      sorter: (a, b) => a.address.length - b.address.length,
       sortDirections: ["descend", "ascend"],
     },
     {
@@ -199,14 +207,7 @@ const Clients = () => {
       key: "operation",
       render: () => (
         <Space size="middle">
-          <a
-            className="text-green-500"
-            onClick={() => navigate("/createClient")}
-          >
-            Create
-          </a>
-          <a className="text-gray-700">Update</a>
-          <a className="text-red-500">Delete</a>
+          <a className="text-green-500">Update</a>
         </Space>
       ),
     },

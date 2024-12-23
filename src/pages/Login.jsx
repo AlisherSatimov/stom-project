@@ -23,6 +23,7 @@ export const Login = () => {
       localStorage.setItem("aToken", aToken);
       // console.log("aToken:", aToken);
       navigate("/");
+      sessionStorage.setItem("currentPage", "/");
     } catch (error) {
       console.error("Login failed", error.response.data);
     } finally {
