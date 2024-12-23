@@ -20,8 +20,8 @@ export const Login = () => {
         apiType: apiType,
       });
       const aToken = response.data;
-      localStorage.setItem("username", aToken);
-      console.log("token:", aToken);
+      localStorage.setItem("aToken", aToken);
+      // console.log("aToken:", aToken);
       navigate("/");
     } catch (error) {
       console.error("Login failed", error.response.data);

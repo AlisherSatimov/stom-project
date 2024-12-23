@@ -5,9 +5,12 @@ import {
   UserAddOutlined,
   UserOutlined,
   BellOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
+import { Header } from "antd/es/layout/layout";
 const { Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -63,17 +66,32 @@ const ManagerLayout = () => {
         />
       </Sider>
       <Layout>
+        <Header
+          style={{
+            padding: 0,
+            margin: 16,
+            borderRadius: borderRadiusLG,
+            background: colorBgContainer,
+          }}
+        >
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
+          />
+          <span>salom</span>
+        </Header>
         <Content
           style={{
             margin: "0 16px",
           }}
         >
-          <Breadcrumb
-            style={{
-              margin: "16px 0",
-            }}
-            items={[{ title: getItem.key }]}
-          />
+          <Breadcrumb style={{}} items={[{ title: getItem.key }]} />
 
           <div
             style={{
@@ -91,7 +109,7 @@ const ManagerLayout = () => {
             textAlign: "center",
           }}
         >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          {new Date().getFullYear()} 3Dclinic
         </Footer>
       </Layout>
     </Layout>
