@@ -703,7 +703,7 @@ const Clients = () => {
       key: "operation",
       render: (_, record) => (
         <Space size="middle">
-          <a className="text-green-500">Update</a>
+          <a className="text-green-500">Add Patient</a>
           <a
             className="text-red-500"
             onClick={() => handleDelete(record.key)}
