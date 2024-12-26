@@ -1,114 +1,90 @@
 import React, { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, Radio, Upload } from "antd";
-import { useNavigate } from "react-router-dom";
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-const ClientID = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const navigate = useNavigate();
-  let aToken = localStorage.getItem("aToken");
+import { useParams } from "react-router-dom";
+import { Card, Spin, Typography } from "antd";
+import axios from "axios";
+
+const { Title, Text } = Typography;
+
+const ClientDetails = () => {
+  const { clientId } = useParams(); // URL'dan client ID ni olish
+  const [clientData, setClientData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const aToken = localStorage.getItem("aToken");
 
   useEffect(() => {
-    if (aToken) {
-      console.log("token mavjud");
-    } else {
-      navigate("/login");
+    if (!clientId) {
+      console.error("clientId is missing from URL");
+      return;
     }
-  }, [aToken, navigate]);
+    const fetchClientData = async () => {
+      try {
+        const response = await axios.get(`/client/${clientId}`, {
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
+        });
+        setClientData(response.data);
+      } catch (error) {
+        console.error("Error fetching client data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchClientData();
+  }, [clientId, aToken]);
 
-  const handleNumberChange = (e) => {
-    setPhoneNumber(e.target.value);
-  };
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!clientData) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <Text type="danger">Client data could not be found!</Text>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <Form
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        layout="horizontal"
+    <div style={{ padding: "20px", display: "flex", justifyContent: "center" }}>
+      <Card
+        title="Client Details"
+        bordered
         style={{
-          maxWidth: 600,
+          width: 400,
+          body: { padding: "20px" }, // bodyStyle o'rniga style.body ishlatilmoqda
         }}
       >
-        <Form.Item label="First Name">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Last Name">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Patronymic">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Gender">
-          <Radio.Group>
-            <Radio value="MALE"> Male </Radio>
-            <Radio value="FEMALE"> Female </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item label="Birthday">
-          <DatePicker />
-        </Form.Item>
-
-        <Form.Item
-          label="Phone Number"
-          name="phoneNumber"
-          rules={[
-            {
-              required: true,
-              message: "Enter your phone number!",
-            },
-            {
-              pattern:
-                /^[+]*[0-9]{1,3}[ ]?[-\s]?[0-9]{1,4}[ ]?[-\s]?[0-9]{1,4}[ ]?[-\s]?[0-9]{1,9}$/, // Telefon raqami uchun regex
-              message: "Please enter a valid phone number!",
-            },
-          ]}
-        >
-          <Input
-            value={phoneNumber}
-            onChange={handleNumberChange}
-            placeholder="+998912345678"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Upload"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload action="/upload.do" listType="picture-card">
-            <button
-              style={{
-                border: 0,
-                background: "none",
-              }}
-              type="button"
-            >
-              <PlusOutlined />
-              <div
-                style={{
-                  marginTop: 8,
-                }}
-              >
-                Upload
-              </div>
-            </button>
-          </Upload>
-        </Form.Item>
-        <Form.Item label="Finish">
-          <Button>Update</Button>
-          <Button>Delete</Button>
-        </Form.Item>
-      </Form>
-    </>
+        <Title level={4} style={{ textAlign: "center" }}>
+          {`${clientData.name} ${clientData.lastName}`}
+        </Title>
+        <Text>
+          <strong>Patronymic:</strong> {clientData.patronymic}
+        </Text>
+        <br />
+        <Text>
+          <strong>Gender:</strong>{" "}
+          {clientData.gender === "MALE" ? "Male" : "Female"}
+        </Text>
+        <br />
+        <Text>
+          <strong>Birthday:</strong> {clientData.birthday}
+        </Text>
+        <br />
+        <Text>
+          <strong>Phone Number:</strong> {clientData.phoneNumber}
+        </Text>
+        <br />
+        <Text>
+          <strong>Address:</strong> {clientData.address}
+        </Text>
+      </Card>
+    </div>
   );
 };
-export default () => <ClientID />;
+
+export default ClientDetails;

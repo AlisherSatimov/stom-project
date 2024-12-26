@@ -29,7 +29,6 @@ const items = [
   getItem("Patients", "/", <DashboardOutlined />),
   getItem("Clients", "/clients", <TeamOutlined />),
   getItem("Create Client", "/createClient", <UserAddOutlined />),
-  getItem("Client ID", "/clientID", <UserOutlined />),
   getItem("Notifications", "/notifications", <BellOutlined />),
 ];
 
