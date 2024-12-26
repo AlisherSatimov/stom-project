@@ -1,55 +1,54 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, Space, Table } from "antd";
+import { Button, Input, Space, Table, Modal } from "antd";
 import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
-const data = [
-  {
-    key: "1",
-    name: "Sardor Baxromov Saidovich",
-    birthday: "14/08/2004",
-    gender: "MALE",
-    phoneNumber: "+998975586625",
-    address: "Urganch",
-  },
-  {
-    key: "2",
-    name: "Akmal Karimov Alievich",
-    birthday: "01/01/1998",
-    gender: "MALE",
-    phoneNumber: "+998975586625",
-    address: "Urganch",
-  },
-  {
-    key: "3",
-    name: "Ali Ekinov Toirovich",
-    birthday: "25/08/1998",
-    gender: "MALE",
-    phoneNumber: "+998972541123",
-    address: "Yangiariq",
-  },
-  {
-    key: "4",
-    name: "Guli Azamatova Murod qizi",
-    birthday: "14/08/2000",
-    gender: "FEMALE",
-    phoneNumber: "+998976543210",
-    address: "Xonqa",
-  },
-];
+import axios from "axios";
+
 const Clients = () => {
-  const [searchText, setSearchText] = useState("");
-  const [searchedColumn, setSearchedColumn] = useState("");
+  const [clients, setClients] = useState([]); // Store clients data
+  const [searchText, setSearchText] = useState(""); // For search functionality
+  const [searchedColumn, setSearchedColumn] = useState(""); // For search functionality
+  const [selectedClient, setSelectedClient] = useState(null); // For storing the selected client for modal
+  const [isModalOpen, setIsModalOpen] = useState(false); // For modal visibility
   const searchInput = useRef(null);
   const navigate = useNavigate();
-  let aToken = localStorage.getItem("aToken");
+  const aToken = localStorage.getItem("aToken"); // Fetch token from localStorage
 
   useEffect(() => {
-    if (aToken) {
-      console.log("token mavjud");
-    } else {
+    if (!aToken) {
       navigate("/login");
+      return;
     }
+
+    const fetchClients = async () => {
+      try {
+        const response = await axios.get("/client", {
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
+        });
+
+        if (response && response.data) {
+          // Jadval uchun ma'lumotlarni moslashtirish
+          const formattedData = response.data.map((item) => ({
+            key: item.id, // Jadval uchun unique key
+            name: `${item.name} ${item.lastName} ${item.patronymic}`,
+            birthday: item.birthday || "N/A",
+            gender: item.gender,
+            phoneNumber: item.phoneNumber || "N/A",
+            address: item.address || "N/A",
+          }));
+
+          setClients(formattedData);
+        }
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+        alert("Failed to fetch client data. Please try again later.");
+      }
+    };
+
+    fetchClients();
   }, [aToken, navigate]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -57,10 +56,12 @@ const Clients = () => {
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
+
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
   };
+
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -165,6 +166,17 @@ const Clients = () => {
         text
       ),
   });
+
+  const handleNameClick = (client) => {
+    setSelectedClient(client);
+    setIsModalOpen(true); // Changed from setIsModalVisible to setIsModalOpen
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Changed from setIsModalVisible to setIsModalOpen
+    setSelectedClient(null);
+  };
+
   const columns = [
     {
       title: "Name",
@@ -172,6 +184,14 @@ const Clients = () => {
       key: "name",
       width: "20%",
       ...getColumnSearchProps("name"),
+      render: (text, record) => (
+        <a
+          onClick={() => handleNameClick(record)}
+          style={{ color: "blue", textDecoration: "underline" }}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: "Birthday",
@@ -212,6 +232,38 @@ const Clients = () => {
       ),
     },
   ];
-  return <Table columns={columns} dataSource={data} />;
+
+  return (
+    <>
+      <Table columns={columns} dataSource={clients} />
+      <Modal
+        title="Client Details"
+        open={isModalOpen} // Changed from visible to open
+        onCancel={handleCloseModal}
+        footer={null}
+      >
+        {selectedClient && (
+          <div>
+            <p>
+              <strong>Name:</strong> {selectedClient.name}
+            </p>
+            <p>
+              <strong>Birthday:</strong> {selectedClient.birthday}
+            </p>
+            <p>
+              <strong>Gender:</strong> {selectedClient.gender}
+            </p>
+            <p>
+              <strong>Phone Number:</strong> {selectedClient.phoneNumber}
+            </p>
+            <p>
+              <strong>Address:</strong> {selectedClient.address}
+            </p>
+          </div>
+        )}
+      </Modal>
+    </>
+  );
 };
+
 export default Clients;

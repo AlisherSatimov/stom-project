@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import ManagerLayout from "./layout/managerLayout";
-import Dashboard from "./pages/Dashboard";
+import Patients from "./pages/Patients";
 import Clients from "./pages/Clients";
 import CreateClient from "./pages/CreateClient";
 import ClientID from "./pages/ClientID";
@@ -12,7 +12,7 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<ManagerLayout />}>
-        <Route index element={<Dashboard />} />
+        <Route index element={<Patients />} />
         <Route path="clients" element={<Clients />} />
         <Route path="createClient" element={<CreateClient />} />
         <Route path="clientID" element={<ClientID />} />

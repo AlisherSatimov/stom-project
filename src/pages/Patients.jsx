@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Badge, Dropdown, Space, Table } from "antd";
+import { Badge, Space, Table } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const expandDataSource = Array.from({
@@ -87,7 +87,7 @@ const expandedRowRender = () => (
   />
 );
 
-export const Dashboard = () => {
+export const Patients = () => {
   const navigate = useNavigate();
   let aToken = localStorage.getItem("aToken");
 
@@ -111,4 +111,4 @@ export const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Patients;

@@ -7,8 +7,13 @@ import "./index.css";
 import axios from "axios";
 axios.defaults.baseURL = "https://3dclinic.uz:8085";
 
+// SiderProvider import qilish
+import { SiderProvider } from "./context/SiderContext";
+
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <App />
+    <SiderProvider>
+      <App />
+    </SiderProvider>
   </BrowserRouter>
 );

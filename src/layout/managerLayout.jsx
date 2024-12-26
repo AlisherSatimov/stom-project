@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   TeamOutlined,
   DashboardOutlined,
@@ -11,8 +10,10 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
+import { useSider } from "../context/SiderContext";
+
 const { Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -25,30 +26,29 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Dashboard", "/", <DashboardOutlined />),
-  getItem("Clients", "clients", <TeamOutlined />),
-  getItem("Create Clinet", "createClient", <UserAddOutlined />),
-  getItem("Client ID", "clientID", <UserOutlined />),
-  getItem("Notifications", "notifications", <BellOutlined />),
+  getItem("Patients", "/", <DashboardOutlined />),
+  getItem("Clients", "/clients", <TeamOutlined />),
+  getItem("Create Client", "/createClient", <UserAddOutlined />),
+  getItem("Client ID", "/clientID", <UserOutlined />),
+  getItem("Notifications", "/notifications", <BellOutlined />),
 ];
 
 const ManagerLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { collapsed, toggleSider } = useSider();
 
   const handleLogOut = () => {
     localStorage.clear();
     navigate("/login");
-    sessionStorage.setItem("currentPage", "/");
   };
 
-  const [collapsed, setCollapsed] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   const handleMenuClick = (key) => {
-    key === "/" ? navigate("/") : navigate(`/${key}`);
-    sessionStorage.setItem("currentPage", key.toString());
+    navigate(key); // `key` to'g'ridan-to'g'ri URL bo'ladi
   };
 
   return (
@@ -57,15 +57,11 @@ const ManagerLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
-      >
+      <Sider collapsible collapsed={collapsed} onCollapse={toggleSider}>
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
-          defaultSelectedKeys={[sessionStorage.getItem("currentPage") || "/"]}
+          selectedKeys={[location.pathname]} // Sahifadagi tanlangan elementni ko'rsatadi
           mode="inline"
           items={items}
           onClick={({ key }) => handleMenuClick(key)}
@@ -84,7 +80,7 @@ const ManagerLayout = () => {
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={toggleSider}
             style={{
               fontSize: "16px",
               width: 64,
@@ -100,7 +96,7 @@ const ManagerLayout = () => {
             />
             <LogoutOutlined
               className="text-2xl"
-              onClick={() => handleLogOut()}
+              onClick={handleLogOut}
               style={{
                 width: 50,
               }}
@@ -112,8 +108,7 @@ const ManagerLayout = () => {
             margin: "0 16px",
           }}
         >
-          <Breadcrumb style={{}} items={[{ title: getItem.key }]} />
-
+          <Breadcrumb style={{}} items={[{}]} />
           <div
             style={{
               padding: 24,
@@ -122,7 +117,7 @@ const ManagerLayout = () => {
               borderRadius: borderRadiusLG,
             }}
           >
-            {<Outlet />}
+            <Outlet />
           </div>
         </Content>
         <Footer
@@ -136,4 +131,5 @@ const ManagerLayout = () => {
     </Layout>
   );
 };
+
 export default ManagerLayout;
