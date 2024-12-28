@@ -112,11 +112,12 @@ const ClientDetails = () => {
     <Layout style={{ minHeight: "50vh" }}>
       <Content style={{ padding: "20px" }}>
         <Row justify="center" align="middle" style={{ minHeight: "50vh" }}>
-          <Col xs={24} sm={16} md={12} lg={8}>
+          <Col>
             <Card
               style={{
                 borderRadius: "10px",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                minWidth: "600px",
               }}
               cover={
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
