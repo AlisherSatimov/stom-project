@@ -21,7 +21,7 @@ export const Login = () => {
       });
       const aToken = response.data;
       localStorage.setItem("aToken", aToken);
-      // console.log("aToken:", aToken);
+      console.log("aToken:", aToken);
       navigate("/");
       sessionStorage.setItem("currentPage", "/");
     } catch (error) {

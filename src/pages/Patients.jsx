@@ -1,111 +1,167 @@
-import React, { useEffect } from "react";
-import { Badge, Space, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { Badge, Space, Table, Modal, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const expandDataSource = Array.from({
-  length: 3,
-}).map((_, i) => ({
-  key: i.toString(),
-  createdAt: "10/11/2024 - 14:12",
-  empName: "Farhod Yusubov",
-  teethServiceEntities: "4-Teeth: Plomba 200",
-  price: "600",
-}));
-const dataSource = Array.from({
-  length: 15,
-}).map((_, i) => ({
-  key: i.toString(),
-  name: "Ali Erkinov",
-  phoneNumber: "+998972541123",
-  birthDay: "25/08/1998",
-  gender: "MALE",
-}));
-const expandColumns = [
-  {
-    title: "Date",
-    dataIndex: "createdAt",
-    key: "createdAt",
-  },
-  {
-    title: "Dentist Name",
-    dataIndex: "empName",
-    key: "empName",
-  },
-  {
-    title: "Upgrade Status",
-    dataIndex: "teethServiceEntities",
-    key: "teethServiceEntities",
-  },
-  {
-    title: "Status",
-    key: "state",
-    render: () => <Badge status="success" text="Finished" />,
-  },
-  {
-    title: "Price",
-    dataIndex: "price",
-    key: "price",
-  },
-  {
-    title: "Action",
-    key: "operation",
-    render: () => (
-      <Space size="middle">
-        <a className="text-green-500">Pay</a>
-        <a className="text-red-500">Delete</a>
-      </Space>
-    ),
-  },
-];
-const columns = [
-  {
-    title: "Client Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Phone Number",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
-  },
-  {
-    title: "Birthday",
-    dataIndex: "birthDay",
-    key: "birthDay",
-  },
-  {
-    title: "Gender",
-    dataIndex: "gender",
-    key: "gender",
-  },
-];
-const expandedRowRender = () => (
-  <Table
-    columns={expandColumns}
-    dataSource={expandDataSource}
-    pagination={false}
-  />
-);
-
-export const Patients = () => {
+const Patients = () => {
+  const [patients, setPatients] = useState([]);
   const navigate = useNavigate();
-  let aToken = localStorage.getItem("aToken");
+  const aToken = localStorage.getItem("aToken");
 
   useEffect(() => {
-    if (aToken) {
-      console.log("token mavjud");
-    } else {
+    if (!aToken) {
       navigate("/login");
+      return;
     }
+
+    const fetchPatients = async () => {
+      try {
+        const response = await axios.get("/patient/find-all", {
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
+        });
+
+        if (response && response.data) {
+          setPatients(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+        alert("Failed to fetch patient data. Please try again later.");
+      }
+    };
+
+    fetchPatients();
   }, [aToken, navigate]);
+
+  const handleDelete = async (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this patient?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        try {
+          const response = await axios.delete(`/patient/${id}`, {
+            headers: {
+              Authorization: `Bearer ${aToken}`,
+            },
+          });
+
+          if (response.status === 200) {
+            message.success("Patient deleted successfully!");
+            setPatients((prev) => prev.filter((patient) => patient.id !== id));
+          } else {
+            message.error("Failed to delete the patient.");
+          }
+        } catch (error) {
+          console.error("Error deleting patient:", error);
+          message.error("An error occurred while deleting the patient.");
+        }
+      },
+    });
+  };
+
+  const columns = [
+    {
+      title: "Client Name",
+      dataIndex: "patientName",
+      key: "patientName",
+      render: (text, record) => `${record.patientName} ${record.patientLName}`,
+    },
+    {
+      title: "Phone Number",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
+    },
+    {
+      title: "Birthday",
+      dataIndex: "birthDay",
+      key: "birthDay",
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      key: "gender",
+    },
+  ];
+
+  const expandedRowRender = (record) => {
+    const expandColumns = [
+      {
+        title: "Date",
+        dataIndex: "createdAt",
+        key: "createdAt",
+      },
+      {
+        title: "Dentist Name",
+        dataIndex: "empName",
+        key: "empName",
+        render: (text, record) => `${record.empName} ${record.empLName}`,
+      },
+      {
+        title: "Upgrade Status",
+        dataIndex: "teethServiceEntities",
+        key: "teethServiceEntities",
+        render: (teethServiceEntities) => (
+          <>
+            {teethServiceEntities.map((service, index) => (
+              <div
+                key={index}
+              >{`${service.teethName}-Teeth: ${service.serviceName} (${service.price})`}</div>
+            ))}
+          </>
+        ),
+      },
+      {
+        title: "Status",
+        key: "state",
+        render: (text, record) => (
+          <Badge
+            status={record.isServiced ? "success" : "processing"}
+            text={record.isServiced ? "Finished" : "Pending"}
+          />
+        ),
+      },
+      {
+        title: "Price",
+        dataIndex: "teethServiceEntities",
+        key: "price",
+        render: (teethServiceEntities) =>
+          teethServiceEntities.reduce(
+            (total, service) => total + service.price,
+            0
+          ),
+      },
+      {
+        title: "Action",
+        key: "operation",
+        render: (_, record) => (
+          <Space size="middle">
+            <a className="text-green-500">Pay</a>
+            <a
+              className="text-red-500"
+              onClick={() => handleDelete(record.id)}
+              style={{ cursor: "pointer" }}
+            >
+              Delete
+            </a>
+          </Space>
+        ),
+      },
+    ];
+
+    return (
+      <Table columns={expandColumns} dataSource={[record]} pagination={false} />
+    );
+  };
 
   return (
     <Table
       columns={columns}
-      expandable={{
-        expandedRowRender, // Kengaytirilgan qatorni ko'rsatish
-      }}
-      dataSource={dataSource}
+      expandable={{ expandedRowRender }}
+      dataSource={patients.map((item) => ({ ...item, key: item.id }))}
       size="middle"
     />
   );

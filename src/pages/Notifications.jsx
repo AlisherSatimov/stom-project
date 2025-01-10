@@ -17,6 +17,8 @@ const Notifications = () => {
           },
         });
 
+        console.log(response.data);
+
         if (response.status === 200 && Array.isArray(response.data)) {
           const today = moment().format("DD/MM/YYYY");
           const filteredNotifications = response.data.filter(
