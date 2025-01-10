@@ -1,36 +1,3 @@
-// import React from "react";
-// import { Row, Col } from "antd";
-// import SalesCard from "../componets/SalesCard";
-// import DashboardWidget from "../componets/ChartGraph";
-// import { UserOutlined } from "@ant-design/icons";
-// import { AppstoreOutlined } from "@ant-design/icons";
-// import { MedicineBoxOutlined } from "@ant-design/icons";
-// import { TeamOutlined } from "@ant-design/icons";
-
-// const Admin = () => {
-//   const cardsData = [
-//     { title: "All Clients", amount: "800" },
-//     { title: "All Services", amount: "48" },
-//     { title: "All Patients", amount: "3,200" },
-//     { title: "All Employees", amount: "14" },
-//   ];
-
-//   return (
-//     <>
-//       <Row gutter={[16, 16]} justify="center">
-//         {cardsData.map((card, index) => (
-//           <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
-//             <SalesCard title={card.title} amount={card.amount} />
-//           </Col>
-//         ))}
-//       </Row>
-//       <DashboardWidget />
-//     </>
-//   );
-// };
-
-// export default Admin;
-
 import React from "react";
 import { Row, Col } from "antd";
 import SalesCard from "../componets/SalesCard";

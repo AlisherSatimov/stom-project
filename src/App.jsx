@@ -7,7 +7,7 @@ import CreateClient from "./pages/CreateClient";
 import ClientID from "./pages/ClientID";
 import Notifications from "./pages/Notifications";
 import { ClientProvider } from "./context/ClientContext";
-import Admin from "./pages/admin";
+import Admin from "./pages/Admin";
 
 function App() {
   return (
