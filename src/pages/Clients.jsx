@@ -388,6 +388,50 @@ const Clients = () => {
       ),
   });
 
+  const handleClientClick = (clientId) => {
+    if (!clientId) {
+      console.error("Client ID is undefined");
+      return;
+    }
+    setClientId(clientId); // Context orqali client ID ni o'rnatish
+    navigate(`/clientID/${clientId}`); // Client sahifasiga parametr bilan yo'naltirish
+  };
+
+  const handleDelete = (clientId) => {
+    confirm({
+      title: "Are you sure you want to delete this client?",
+      icon: <ExclamationCircleOutlined />,
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        try {
+          const response = await axios.delete(`/client/${clientId}`, {
+            headers: {
+              Authorization: `Bearer ${aToken}`,
+            },
+          });
+
+          if (response.status === 200) {
+            message.success("Client deleted successfully!");
+            setClients((prev) =>
+              prev.filter((client) => client.key !== clientId)
+            );
+          } else {
+            message.error("Failed to delete client.");
+          }
+        } catch (error) {
+          console.error("Error deleting client:", error);
+          message.error("An error occurred while deleting the client.");
+        }
+      },
+      onCancel() {
+        console.log("Delete action canceled.");
+      },
+    });
+  };
+
   const handleAddPatient = (client) => {
     setSelectedClient(client);
     setIsModalVisible(true);
@@ -428,6 +472,14 @@ const Clients = () => {
       key: "name",
       width: "20%",
       ...getColumnSearchProps("name"),
+      render: (text, record) => (
+        <a
+          onClick={() => handleClientClick(record.key)}
+          style={{ color: "#1890ff", cursor: "pointer" }}
+        >
+          {text}
+        </a>
+      ),
     },
     {
       title: "Birthday",
@@ -469,6 +521,13 @@ const Clients = () => {
           >
             Add Patient
           </a>
+          <a
+            className="text-red-500"
+            onClick={() => handleDelete(record.key)}
+            style={{ cursor: "pointer" }}
+          >
+            Delete
+          </a>
         </Space>
       ),
     },
@@ -480,7 +539,7 @@ const Clients = () => {
 
       <Modal
         title="Add Patient"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
