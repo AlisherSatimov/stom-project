@@ -5,6 +5,7 @@ import axios from "axios";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]); // Faol kengaytirilgan qatorlar
   const navigate = useNavigate();
   const aToken = localStorage.getItem("aToken");
 
@@ -210,9 +211,26 @@ const Patients = () => {
     <>
       <Table
         columns={columns}
-        expandable={{ expandedRowRender }}
+        expandable={{
+          expandedRowRender,
+          expandedRowKeys,
+          onExpand: (expanded, record) => {
+            setExpandedRowKeys(expanded ? [record.key] : []);
+          },
+        }}
+        rowClassName={(record) =>
+          expandedRowKeys.includes(record.key)
+            ? "expanded-row pointer-row"
+            : "pointer-row"
+        }
         dataSource={patients.map((item) => ({ ...item, key: item.id }))}
         size="middle"
+        onRow={(record) => ({
+          onClick: () => {
+            const isExpanded = expandedRowKeys.includes(record.key);
+            setExpandedRowKeys(isExpanded ? [] : [record.key]);
+          },
+        })}
       />
 
       <Modal

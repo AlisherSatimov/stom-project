@@ -25,3 +25,16 @@
 .admin-total-card {
   padding: 0px !important;
 }
+
+.expanded-row {
+  background-color: #e6f7ff; /* Och moviy rang */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.pointer-row {
+  cursor: pointer; /* Kursorni pointerga o'zgartirish */
+}
+.pointer-row:hover {
+  background-color: #f5f5f5; /* Row ustida hover effekti */
+}
