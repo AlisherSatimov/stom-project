@@ -2,11 +2,11 @@ import {
   TeamOutlined,
   DashboardOutlined,
   UserAddOutlined,
-  BellOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   BellTwoTone,
   LogoutOutlined,
+  ReconciliationOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
@@ -25,13 +25,17 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Patients", "/", <DashboardOutlined />),
-  getItem("Clients", "/clients", <TeamOutlined />),
-  getItem("Create Client", "/createClient", <UserAddOutlined />),
-  getItem("Notifications", "/notifications", <BellOutlined />),
+  getItem("Admin Dashboard", "/admin", <DashboardOutlined />),
+  getItem("Employees", "/admin/employees", <TeamOutlined />),
+  getItem("Create Employee", "/admin/createEmployee", <UserAddOutlined />),
+  getItem(
+    "Service Controller",
+    "/admin/serviceController",
+    <ReconciliationOutlined />
+  ),
 ];
 
-const ManagerLayout = () => {
+const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { collapsed, toggleSider } = useSider();
@@ -130,4 +134,4 @@ const ManagerLayout = () => {
   );
 };
 
-export default ManagerLayout;
+export default AdminLayout;

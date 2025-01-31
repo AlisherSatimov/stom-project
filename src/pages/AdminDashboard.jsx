@@ -9,7 +9,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 
-const Admin = () => {
+const AdminDashboard = () => {
   const cardsData = [
     { title: "All Clients", amount: "800", icon: UserOutlined },
     { title: "All Services", amount: "48", icon: AppstoreOutlined },
@@ -35,4 +35,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AdminDashboard;

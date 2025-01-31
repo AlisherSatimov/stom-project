@@ -19,7 +19,7 @@ export const Login = () => {
         password: password,
         apiType: apiType,
       });
-      const aToken = response.data;
+      console.log(response.data);
       localStorage.setItem("aToken", aToken);
       console.log("aToken:", aToken);
       navigate("/");
