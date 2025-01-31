@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Spin } from "antd";
+import { Form, Input, Button, Spin, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -19,13 +19,30 @@ export const Login = () => {
         password: password,
         apiType: apiType,
       });
-      console.log(response.data);
+      let fName = response.data.firstName + "";
+      let lName = response.data.lastName + "";
+      let aToken = response.data.token;
       localStorage.setItem("aToken", aToken);
-      console.log("aToken:", aToken);
-      navigate("/");
-      sessionStorage.setItem("currentPage", "/");
+      if (response.data.role == "ROLE_MODERATOR") {
+        navigate("/");
+        sessionStorage.setItem("currentPage", "/");
+        message.success(
+          `Welcome Manager ${fName.toUpperCase()} ${lName.toUpperCase()}`
+        );
+      } else if (response.data.role == "ROLE_ADMIN") {
+        navigate("/admin");
+        sessionStorage.setItem("currentPage", "/admin");
+        message.success(
+          `Welcome Admin ${fName.toUpperCase()} ${lName.toUpperCase()}`
+        );
+      } else {
+        message.error(
+          `You are not a Manager or Admin. Please enter a valid Login and Password.`
+        );
+      }
     } catch (error) {
-      console.error("Login failed", error.response.data);
+      console.error("Login failed", error.response.data.error);
+      message.error(`Login failed: ${error.response.data.error}`);
     } finally {
       setLoading(false);
     }
