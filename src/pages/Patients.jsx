@@ -146,7 +146,7 @@ const Patients = () => {
         render: (text, record) => `${record.empName} ${record.empLName}`,
       },
       {
-        title: "Upgrade Status",
+        title: "Services",
         dataIndex: "teethServiceEntities",
         key: "teethServiceEntities",
         render: (teethServiceEntities) => (
@@ -182,18 +182,32 @@ const Patients = () => {
       {
         title: "Action",
         key: "operation",
+        width: "16%",
         render: (_, record) => (
           <Space size="middle">
             <a
               onClick={() => handlePay(record)}
-              style={{ color: "green", cursor: "pointer" }}
+              style={{
+                color: "green",
+                cursor: "pointer",
+                border: "1px solid green",
+                padding: "8px 26px",
+                borderRadius: "5px",
+                backgroundColor: "#18ff331e",
+              }}
             >
               Pay
             </a>
             <a
               className="text-red-500"
               onClick={() => handleDelete(record.id)}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                border: "1px solid red",
+                padding: "8px 16px",
+                borderRadius: "5px",
+                backgroundColor: "#ff181809",
+              }}
             >
               Delete
             </a>

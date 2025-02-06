@@ -2,8 +2,6 @@ import {
   TeamOutlined,
   DashboardOutlined,
   UserAddOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   BellTwoTone,
   LogoutOutlined,
   ReconciliationOutlined,
@@ -25,7 +23,7 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("Admin Dashboard", "/admin", <DashboardOutlined />),
+  getItem("Dashboard", "/admin", <DashboardOutlined />),
   getItem("Employees", "/admin/employees", <TeamOutlined />),
   getItem("Create Employee", "/admin/createEmployee", <UserAddOutlined />),
   getItem(
@@ -59,8 +57,18 @@ const AdminLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <Sider collapsible collapsed={collapsed} onCollapse={toggleSider}>
-        <div className="demo-logo-vertical" />
+      <Sider>
+        <div
+          className="text-lg"
+          style={{
+            padding: "32px 30px",
+            color: "#fff",
+            fontWeight: "600",
+            fontSize: "32px",
+          }}
+        >
+          3D Clinic
+        </div>
         <Menu
           theme="dark"
           selectedKeys={[location.pathname]} // Sahifadagi tanlangan elementni ko'rsatadi
@@ -72,23 +80,25 @@ const AdminLayout = () => {
       <Layout>
         <Header
           style={{
-            padding: 0,
+            padding: "0 20px",
             margin: 16,
             borderRadius: borderRadiusLG,
             background: colorBgContainer,
           }}
           className="flex justify-between items-center"
         >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={toggleSider}
+          <span>
+            <img src="/boss.png" alt="boss icon" width={45} />
+          </span>
+          <span
             style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
+              fontSize: "28px",
+              fontWeight: "600",
+              letterSpacing: "2px",
             }}
-          />
+          >
+            Adminstrator
+          </span>
           <span className="flex">
             <BellTwoTone
               className="text-2xl"
@@ -96,13 +106,7 @@ const AdminLayout = () => {
                 width: 50,
               }}
             />
-            <LogoutOutlined
-              className="text-2xl"
-              onClick={handleLogOut}
-              style={{
-                width: 50,
-              }}
-            />
+            <LogoutOutlined className="text-2xl" onClick={handleLogOut} />
           </span>
         </Header>
         <Content

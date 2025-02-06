@@ -273,25 +273,39 @@ const Clients = () => {
       title: "Phone Number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
-      width: "20%",
+      width: "15%",
       ...getColumnSearchProps("phoneNumber"),
     },
     {
       title: "Action",
       key: "operation",
+      width: "15%",
+
       render: (_, record) => (
         <Space size="middle">
           <a
             className="text-green-500"
             onClick={() => handleAddPatient(record)}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: "pointer",
+              border: "1px solid green",
+              padding: "8px 16px",
+              borderRadius: "5px",
+              backgroundColor: "#18ff331e",
+            }}
           >
             Add Patient
           </a>
           <a
             className="text-red-500"
             onClick={() => handleDelete(record.key)}
-            style={{ cursor: "pointer" }}
+            style={{
+              cursor: "pointer",
+              border: "1px solid red",
+              padding: "8px 28px",
+              borderRadius: "5px",
+              backgroundColor: "#ff181809",
+            }}
           >
             Delete
           </a>

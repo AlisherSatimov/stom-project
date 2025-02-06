@@ -3,15 +3,12 @@ import {
   DashboardOutlined,
   UserAddOutlined,
   BellOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   BellTwoTone,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
-import { useSider } from "../context/SiderContext";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -34,7 +31,6 @@ const items = [
 const ManagerLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { collapsed, toggleSider } = useSider();
 
   const handleLogOut = () => {
     localStorage.clear();
@@ -55,60 +51,72 @@ const ManagerLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <Sider collapsible collapsed={collapsed} onCollapse={toggleSider}>
-        <div className="demo-logo-vertical" />
+      <Sider>
+        <div
+          className="text-lg"
+          style={{
+            padding: "32px 30px",
+            color: "#fff",
+            fontWeight: "600",
+            fontSize: "32px",
+          }}
+        >
+          3D Clinic
+        </div>
+
         <Menu
           theme="dark"
-          selectedKeys={[location.pathname]} // Sahifadagi tanlangan elementni ko'rsatadi
+          selectedKeys={[location.pathname]}
           mode="inline"
           items={items}
           onClick={({ key }) => handleMenuClick(key)}
         />
       </Sider>
       <Layout>
-        <Header
-          style={{
-            padding: 0,
-            margin: 16,
-            borderRadius: borderRadiusLG,
-            background: colorBgContainer,
-          }}
-          className="flex justify-between items-center"
-        >
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={toggleSider}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
-          />
-          <span className="flex">
-            <BellTwoTone
-              className="text-2xl"
-              style={{
-                width: 50,
-              }}
-            />
-            <LogoutOutlined
-              className="text-2xl"
-              onClick={handleLogOut}
-              style={{
-                width: 50,
-              }}
-            />
-          </span>
-        </Header>
         <Content
+          className="manager-layout"
           style={{
-            margin: "0 16px",
+            padding: "16px",
           }}
         >
+          <Header
+            style={{
+              borderRadius: borderRadiusLG,
+              padding: "0 20px",
+              background: "#fff",
+            }}
+            className="flex justify-between items-center"
+          >
+            <span>
+              <img src="/manager-icon.png" alt="manager-icon" width={45} />
+            </span>
+            <span
+              style={{
+                fontSize: "28px",
+                fontWeight: "600",
+                letterSpacing: "2px",
+              }}
+            >
+              Manager
+            </span>
+            <span className="flex">
+              <BellTwoTone
+                className="text-2xl"
+                style={{
+                  width: 50,
+                }}
+              />
+              <LogoutOutlined
+                className="text-2xl"
+                onClick={handleLogOut}
+                //
+              />
+            </span>
+          </Header>
           <Breadcrumb style={{}} items={[{}]} />
           <div
             style={{
+              marginTop: 16,
               padding: 24,
               minHeight: 360,
               background: colorBgContainer,
@@ -120,7 +128,11 @@ const ManagerLayout = () => {
         </Content>
         <Footer
           style={{
-            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "30px",
+            background: "#fff",
           }}
         >
           {new Date().getFullYear()} 3Dclinic
