@@ -199,7 +199,7 @@ const Clients = () => {
     });
   };
 
-  const handleAddPatient = (client) => {
+  const handleAddQueue = (client) => {
     setSelectedClient(client);
     setIsModalVisible(true);
   };
@@ -221,13 +221,13 @@ const Clients = () => {
       });
 
       if (response.status === 200) {
-        message.success("Patient successfully created!");
+        message.success("Queue successfully created!");
         setIsModalVisible(false);
       } else {
-        message.error("Failed to create patient.");
+        message.error("Failed to create queue.");
       }
     } catch (error) {
-      console.error("Error creating patient:", error);
+      console.error("Error creating queue:", error);
       message.error("An error occurred. Please try again.");
     }
   };
@@ -285,7 +285,7 @@ const Clients = () => {
         <Space size="middle">
           <a
             className="text-green-500"
-            onClick={() => handleAddPatient(record)}
+            onClick={() => handleAddQueue(record)}
             style={{
               cursor: "pointer",
               border: "1px solid green",
@@ -294,7 +294,7 @@ const Clients = () => {
               backgroundColor: "#18ff331e",
             }}
           >
-            Add Patient
+            Add Queue
           </a>
           <a
             className="text-red-500"
@@ -319,7 +319,7 @@ const Clients = () => {
       <Table columns={columns} dataSource={clients} />
 
       <Modal
-        title="Add Patient"
+        title="Add Queue"
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
