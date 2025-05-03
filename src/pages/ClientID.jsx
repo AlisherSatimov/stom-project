@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Layout,
   Card,
@@ -16,20 +16,29 @@ import {
   Select,
   DatePicker,
   message,
+  Upload,
 } from "antd";
-import { UserOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  UploadOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import axios from "axios";
-import moment from "moment"; // moment kutubxonasini import qilish
+import moment from "moment";
 
 const { Title } = Typography;
 const { Content } = Layout;
 const { Option } = Select;
+const { confirm } = Modal;
 
 const ClientDetails = () => {
   const { clientId } = useParams();
+  const navigate = useNavigate();
   const [clientData, setClientData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const aToken = localStorage.getItem("aToken");
 
   const [form] = Form.useForm();
@@ -47,6 +56,7 @@ const ClientDetails = () => {
           },
         });
         setClientData(response.data);
+        console.log("Client data:", response.data);
       } catch (error) {
         console.error("Error fetching client data:", error);
       } finally {
@@ -60,7 +70,7 @@ const ClientDetails = () => {
     try {
       const updatedValues = {
         ...values,
-        birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : null, // moment formatlash
+        birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : null,
       };
 
       const response = await axios.put(`/client/${clientId}`, updatedValues, {
@@ -77,6 +87,65 @@ const ClientDetails = () => {
     } catch (error) {
       console.error("Error updating client:", error);
       message.error("Failed to update client.");
+    }
+  };
+
+  const handleDeleteClient = () => {
+    confirm({
+      title: "Are you sure you want to delete this client?",
+      icon: <ExclamationCircleOutlined />,
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        try {
+          const response = await axios.delete(`/client/${clientId}`, {
+            headers: {
+              Authorization: `Bearer ${aToken}`,
+            },
+          });
+          if (response.status === 200) {
+            message.success("Client deleted successfully!");
+            navigate("/clients");
+          }
+        } catch (error) {
+          console.error("Delete error:", error);
+          message.error("Failed to delete client.");
+        }
+      },
+    });
+  };
+
+  const handleBeforeUpload = (file) => {
+    setFile(file);
+    return false;
+  };
+
+  const handleUpload = async () => {
+    if (!file) return message.warning("Please select a file first.");
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("dto", JSON.stringify({ id: clientId }));
+
+    try {
+      await axios.post(
+        `https://3dclinic.uz:8085/analyse/upload/${clientId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+          },
+        }
+      );
+      message.success("File uploaded successfully.");
+      setFile(null);
+    } catch (error) {
+      console.error("Upload error:", error);
+      message.error("Failed to upload file.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -135,13 +204,16 @@ const ClientDetails = () => {
                     form.setFieldsValue({
                       ...clientData,
                       birthday: clientData.birthday
-                        ? moment(clientData.birthday, "YYYY-MM-DD")
-                        : null, // moment bilan DatePicker uchun formatlash
+                        ? moment(clientData.birthday, "DD/MM/YYYY", true)
+                        : null,
                     });
                     setIsModalOpen(true);
                   }}
                 >
                   Update Client
+                </Button>,
+                <Button danger onClick={handleDeleteClient}>
+                  Delete Client
                 </Button>,
               ]}
             >
@@ -160,7 +232,11 @@ const ClientDetails = () => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Birthday">
                   {clientData.birthday
-                    ? moment(clientData.birthday).format("YYYY-MM-DD")
+                    ? moment(
+                        clientData.birthday,
+                        ["DD/MM/YYYY", "YYYY-MM-DD"],
+                        true
+                      ).format("DD/MM/YYYY")
                     : "N/A"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Phone Number">
@@ -170,6 +246,26 @@ const ClientDetails = () => {
                   {clientData.address}
                 </Descriptions.Item>
               </Descriptions>
+
+              <div style={{ marginTop: "24px" }}>
+                <Title level={5}>Upload Analiz File</Title>
+                <Upload
+                  beforeUpload={handleBeforeUpload}
+                  showUploadList={file ? [{ name: file.name }] : []}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Select File</Button>
+                </Upload>
+                <Button
+                  type="primary"
+                  onClick={handleUpload}
+                  disabled={!file}
+                  loading={uploading}
+                  style={{ marginTop: "8px" }}
+                >
+                  Upload
+                </Button>
+              </div>
             </Card>
           </Col>
         </Row>
@@ -228,8 +324,13 @@ const ClientDetails = () => {
                 { required: true, message: "Please select the birthday!" },
               ]}
             >
-              <DatePicker style={{ width: "100%" }} />
+              <DatePicker
+                style={{ width: "100%" }}
+                open={false}
+                format="YYYY-MM-DD"
+              />
             </Form.Item>
+
             <Form.Item
               name="phoneNumber"
               label="Phone Number"

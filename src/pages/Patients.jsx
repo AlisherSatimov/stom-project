@@ -28,7 +28,8 @@ const Patients = () => {
         });
 
         if (response && response.data) {
-          setPatients(response.data);
+          setPatients(response.data.sort((a, b) => b.id - a.id));
+          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching patients:", error);

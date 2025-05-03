@@ -3,13 +3,17 @@ import { Table, Tag, Space, Modal, message, Button, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useEmployee } from "../context/EmployeeContext";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [searchText, setSearchText] = useState(""); // Qidirilayotgan matnni saqlaydi
   const [searchedColumn, setSearchedColumn] = useState(""); // Qaysi ustunda qidirayotganimizni saqlaydi
+  const { setEmployeeId, setEmployeeData } = useEmployee();
   const searchInput = useRef(null);
   const aToken = localStorage.getItem("aToken");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -186,7 +190,33 @@ const Employees = () => {
 
   return (
     <div>
-      <Table columns={columns} dataSource={employees} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={employees}
+        rowKey="id"
+        onRow={(record) => ({
+          onClick: (e) => {
+            const target = e.target;
+
+            if (
+              target.tagName === "BUTTON" ||
+              target.closest("button") ||
+              target.tagName === "A" ||
+              target.closest("a") ||
+              target.tagName === "svg" ||
+              target.closest(".ant-btn")
+            ) {
+              return;
+            }
+
+            setEmployeeId(record.id);
+            // YANGI QATOR: employeeData ni ham saqlab qo‘yamiz
+            setEmployeeData(record);
+            navigate(`/admin/employeeID/${record.id}`);
+          },
+          style: { cursor: "pointer" },
+        })}
+      />
     </div>
   );
 };

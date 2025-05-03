@@ -6,7 +6,7 @@ import {
   BellTwoTone,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 
@@ -26,6 +26,7 @@ const items = [
   getItem("Clients", "/clients", <TeamOutlined />),
   getItem("Create Client", "/createClient", <UserAddOutlined />),
   getItem("Notifications", "/notifications", <BellOutlined />),
+  getItem("XrayUploader", "/XrayUploader", <BellOutlined />),
 ];
 
 const ManagerLayout = () => {

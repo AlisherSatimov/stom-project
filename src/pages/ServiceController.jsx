@@ -58,6 +58,7 @@ const ServiceController = () => {
     form.setFieldsValue({
       serviceName: service.serviceName,
       price: service.price,
+      expense: service.expense,
     });
     setIsModalOpen(true);
   };
@@ -70,12 +71,19 @@ const ServiceController = () => {
   };
 
   const handleModalSubmit = async (values) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${aToken}`,
+        "Content-Type": "application/json",
+      },
+    };
+
     if (isEditing) {
       try {
         const response = await axios.put(
           `/service/${selectedService.id}`,
           values,
-          { headers: { Authorization: `Bearer ${aToken}` } }
+          config
         );
         if (response.status === 200) {
           message.success("Service updated successfully!");
@@ -88,10 +96,8 @@ const ServiceController = () => {
       }
     } else {
       try {
-        const response = await axios.post("/service", values, {
-          headers: { Authorization: `Bearer ${aToken}` },
-        });
-        if (response.status === 200) {
+        const response = await axios.post("/service", values, config);
+        if (response.status === 200 || response.status === 201) {
           message.success("Service created successfully!");
           fetchServices();
           setIsModalOpen(false);
@@ -116,8 +122,16 @@ const ServiceController = () => {
       render: (price) => `${price.toLocaleString()} UZS`,
     },
     {
+      title: "Expense",
+      dataIndex: "expense",
+      key: "expense",
+      render: (expense) => `${expense.toLocaleString()} UZS`,
+    },
+    {
       title: "Action",
       key: "action",
+      align: "right",
+      width: 140,
       render: (_, record) => (
         <Space size="middle">
           <Button type="default" onClick={() => handleEdit(record)}>
@@ -165,6 +179,13 @@ const ServiceController = () => {
             label="Price"
             name="price"
             rules={[{ required: true, message: "Please enter price" }]}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
+            label="Expense"
+            name="expense"
+            rules={[{ required: true, message: "Please enter expense" }]}
           >
             <Input type="number" />
           </Form.Item>

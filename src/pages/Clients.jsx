@@ -46,14 +46,16 @@ const Clients = () => {
         });
 
         if (response && response.data) {
-          const formattedData = response.data.map((item) => ({
-            key: item.id,
-            name: `${item.name} ${item.lastName} ${item.patronymic}`,
-            birthday: item.birthday || "N/A",
-            gender: item.gender,
-            phoneNumber: item.phoneNumber || "N/A",
-            address: item.address || "N/A",
-          }));
+          const formattedData = response.data
+            .sort((a, b) => b.id - a.id) //
+            .map((item) => ({
+              key: item.id,
+              name: `${item.name} ${item.lastName} ${item.patronymic}`,
+              birthday: item.birthday || "N/A",
+              gender: item.gender,
+              phoneNumber: item.phoneNumber || "N/A",
+              address: item.address || "N/A",
+            }));
 
           setClients(formattedData);
         }
@@ -104,7 +106,6 @@ const Clients = () => {
       selectedKeys,
       confirm,
       clearFilters,
-      close,
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -239,14 +240,6 @@ const Clients = () => {
       key: "name",
       width: "20%",
       ...getColumnSearchProps("name"),
-      render: (text, record) => (
-        <a
-          onClick={() => handleClientClick(record.key)}
-          style={{ color: "#1890ff", cursor: "pointer" }}
-        >
-          {text}
-        </a>
-      ),
     },
     {
       title: "Birthday",
@@ -294,7 +287,7 @@ const Clients = () => {
               backgroundColor: "#18ff331e",
             }}
           >
-            Add Queue
+            Add_Queue
           </a>
           <a
             className="text-red-500"
@@ -316,7 +309,28 @@ const Clients = () => {
 
   return (
     <>
-      <Table columns={columns} dataSource={clients} />
+      <Table
+        columns={columns}
+        dataSource={clients}
+        onRow={(record) => ({
+          onClick: (e) => {
+            const target = e.target;
+
+            if (
+              target.tagName === "BUTTON" ||
+              target.closest("button") ||
+              target.tagName === "A" ||
+              target.closest("a") ||
+              target.tagName === "svg" ||
+              target.closest(".ant-btn")
+            ) {
+              return;
+            }
+            handleClientClick(record.key);
+          },
+          style: { cursor: "pointer" },
+        })}
+      />
 
       <Modal
         title="Add Queue"

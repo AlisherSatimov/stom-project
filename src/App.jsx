@@ -16,6 +16,7 @@ import CreateEmployee from "./pages/CreateEmployee";
 import { ClientProvider } from "./context/ClientContext";
 import { EmployeeProvider } from "./context/EmployeeContext";
 import EmployeeID from "./pages/EmployeeID";
+import XrayUploader from "./pages/xfile";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/createClient" element={<CreateClient />} />
             <Route path="/clientID/:clientId" element={<ClientID />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/XrayUploader" element={<XrayUploader />} />
           </Route>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />

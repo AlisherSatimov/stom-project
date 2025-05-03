@@ -178,26 +178,6 @@ const CreateClient = () => {
         >
           <Input size="large" />
         </Form.Item>
-        <Form.Item
-          label={
-            <span style={{ fontSize: "16px", fontWeight: "bold" }}>Upload</span>
-          }
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload action="/upload.do" listType="picture-card">
-            <button
-              style={{
-                border: 0,
-                background: "none",
-              }}
-              type="button"
-            >
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
-            </button>
-          </Upload>
-        </Form.Item>
         <Form.Item>
           <Space style={{ width: "100%", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" size="large">
