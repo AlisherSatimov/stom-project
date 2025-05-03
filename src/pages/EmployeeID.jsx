@@ -430,14 +430,13 @@ const EmployeeID = () => {
         </Modal>
 
         {employeeData.role === "ROLE_USER" && (
-          <Card title="🧾 Hisobot bo‘limi" style={{ marginTop: 40 }}>
+          <Card title="🧾 Report" style={{ marginTop: 40 }}>
             <Row gutter={16} style={{ marginBottom: 16 }}>
               <Col span={6}>
                 <Input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  placeholder="Boshlanish sanasi"
                 />
               </Col>
               <Col span={6}>
@@ -445,28 +444,27 @@ const EmployeeID = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  placeholder="Tugash sanasi"
                 />
               </Col>
               <Col>
                 <Button type="primary" onClick={handleReportCalculation}>
-                  Hisobotni hisoblash
+                  Report calculation
                 </Button>
               </Col>
             </Row>
 
             <Row gutter={16} style={{ marginBottom: 16 }}>
               <Col span={6}>
-                👥 Jami bemorlar: <strong>{reportStats.totalPatients}</strong>
+                👥 Total patients: <strong>{reportStats.totalPatients}</strong>
               </Col>
               <Col span={6}>
-                💰 Tushum: <strong>{reportStats.totalIncome} so'm</strong>
+                💰 Income: <strong>{reportStats.totalIncome} so'm</strong>
               </Col>
               <Col span={6}>
-                💸 Xarajat: <strong>{reportStats.totalExpense} so'm</strong>
+                💸 Costs: <strong>{reportStats.totalExpense} so'm</strong>
               </Col>
               <Col span={6}>
-                📈 Sof foyda: <strong>{reportStats.netProfit} so'm</strong>
+                📈 Net profit: <strong>{reportStats.netProfit} so'm</strong>
               </Col>
             </Row>
 
@@ -482,7 +480,7 @@ const EmployeeID = () => {
                 />
               </Col>
               <Col span={6}>
-                🎯 Dentist ulushi:{" "}
+                🎯 Dentist salary:{" "}
                 <strong>{Math.round(reportStats.dentistShare)} so'm</strong>
               </Col>
             </Row>
