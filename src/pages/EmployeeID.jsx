@@ -431,118 +431,125 @@ const EmployeeID = () => {
 
         {employeeData.role === "ROLE_USER" && (
           <Card title="🧾 Report" style={{ marginTop: 40 }}>
-            <Row gutter={16} style={{ marginBottom: 16 }}>
+            <Row gutter={16} style={{ marginBottom: 24 }}>
               <Col span={6}>
-                <Input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
+                <div style={{ fontWeight: "bold", marginBottom: 4 }}>
+                  Date range
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <Input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    style={{ width: "50%" }}
+                  />
+                  <Input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    style={{ width: "50%" }}
+                  />
+                </div>
               </Col>
-              <Col span={6}>
-                <Input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </Col>
-              <Col>
+              <Col span={6} style={{ display: "flex", alignItems: "flex-end" }}>
                 <Button type="primary" onClick={handleReportCalculation}>
                   Report calculation
                 </Button>
               </Col>
+              <Col
+                span={6}
+                style={{ display: "flex", alignItems: "flex-end" }}
+              ></Col>
+              <Col span={6}>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: 4,
+                    marginLeft: 95,
+                  }}
+                >
+                  For dentist
+                </div>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={reportStats.percent}
+                    onChange={handlePercentChange}
+                    addonAfter="%"
+                    style={{ width: "79%", marginLeft: 95 }}
+                  />
+                </div>
+              </Col>
             </Row>
 
-            <Row gutter={16} style={{ marginBottom: 16 }}>
-              <Col span={6}>
-                👥 Total patients: <strong>{reportStats.totalPatients}</strong>
-              </Col>
-              <Col span={6}>
-                💰 Income: <strong>{reportStats.totalIncome} so'm</strong>
-              </Col>
-              <Col span={6}>
-                💸 Costs: <strong>{reportStats.totalExpense} so'm</strong>
-              </Col>
-              <Col span={6}>
-                📈 Net profit: <strong>{reportStats.netProfit} so'm</strong>
-              </Col>
-            </Row>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: "16px",
+                marginTop: "24px",
+              }}
+            >
+              <Card
+                style={{
+                  flex: "1 1 18%",
+                  textAlign: "center",
+                  backgroundColor: "#f0f5ff",
+                }}
+              >
+                👥 <div>Total patients</div>
+                <strong>{reportStats.totalPatients}</strong>
+              </Card>
 
-            <Row gutter={16}>
-              <Col span={4}>
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={reportStats.percent}
-                  onChange={handlePercentChange}
-                  addonAfter="%"
-                />
-              </Col>
-              <Col span={6}>
-                🎯 Dentist salary:{" "}
+              <Card
+                style={{
+                  flex: "1 1 18%",
+                  textAlign: "center",
+                  backgroundColor: "#f6ffed",
+                }}
+              >
+                💰 <div>Income</div>
+                <strong>{reportStats.totalIncome} so'm</strong>
+              </Card>
+
+              <Card
+                style={{
+                  flex: "1 1 18%",
+                  textAlign: "center",
+                  backgroundColor: "#fffbe6",
+                }}
+              >
+                💸 <div>Costs</div>
+                <strong>{reportStats.totalExpense} so'm</strong>
+              </Card>
+
+              <Card
+                style={{
+                  flex: "1 1 18%",
+                  textAlign: "center",
+                  backgroundColor: "#fff0f6",
+                }}
+              >
+                📈 <div>Net profit</div>
+                <strong>{reportStats.netProfit} so'm</strong>
+              </Card>
+
+              <Card
+                style={{
+                  flex: "1 1 18%",
+                  textAlign: "center",
+                  backgroundColor: "#e6fffb",
+                }}
+              >
+                🎯 <div>Dentist salary</div>
                 <strong>{Math.round(reportStats.dentistShare)} so'm</strong>
-              </Col>
-            </Row>
+              </Card>
+            </div>
           </Card>
         )}
-        {/* <Card title="🧾 Hisobot bo‘limi" style={{ marginTop: 40 }}>
-          <Row gutter={16} style={{ marginBottom: 16 }}>
-            <Col span={6}>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                placeholder="Boshlanish sanasi"
-              />
-            </Col>
-            <Col span={6}>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                placeholder="Tugash sanasi"
-              />
-            </Col>
-            <Col>
-              <Button type="primary" onClick={handleReportCalculation}>
-                Hisobotni hisoblash
-              </Button>
-            </Col>
-          </Row>
-
-          <Row gutter={16} style={{ marginBottom: 16 }}>
-            <Col span={6}>
-              👥 Jami bemorlar: <strong>{reportStats.totalPatients}</strong>
-            </Col>
-            <Col span={6}>
-              💰 Tushum: <strong>{reportStats.totalIncome} so'm</strong>
-            </Col>
-            <Col span={6}>
-              💸 Xarajat: <strong>{reportStats.totalExpense} so'm</strong>
-            </Col>
-            <Col span={6}>
-              📈 Sof foyda: <strong>{reportStats.netProfit} so'm</strong>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={4}>
-              <Input
-                type="number"
-                min={0}
-                max={100}
-                value={reportStats.percent}
-                onChange={handlePercentChange}
-                addonAfter="%"
-              />
-            </Col>
-            <Col span={6}>
-              🎯 Dentist ulushi:{" "}
-              <strong>{Math.round(reportStats.dentistShare)} so'm</strong>
-            </Col>
-          </Row>
-        </Card> */}
       </Content>
     </Layout>
   );
