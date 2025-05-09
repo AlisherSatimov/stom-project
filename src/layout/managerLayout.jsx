@@ -26,7 +26,6 @@ const items = [
   getItem("Clients", "/clients", <TeamOutlined />),
   getItem("Create Client", "/createClient", <UserAddOutlined />),
   getItem("Notifications", "/notifications", <BellOutlined />),
-  getItem("XrayUploader", "/XrayUploader", <BellOutlined />),
 ];
 
 const ManagerLayout = () => {

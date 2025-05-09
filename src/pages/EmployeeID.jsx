@@ -186,7 +186,7 @@ const EmployeeID = () => {
 
   const handlePercentChange = (e) => {
     const percent = Number(e.target.value);
-    const dentistShare = (reportStats.netProfit * percent) / 100;
+    const dentistShare = (reportStats.totalIncome * percent) / 100;
 
     setReportStats((prev) => ({
       ...prev,

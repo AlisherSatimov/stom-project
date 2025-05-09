@@ -39,7 +39,9 @@ const ClientDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [analyses, setAnalyses] = useState([]);
   const aToken = localStorage.getItem("aToken");
+  const [fileList, setFileList] = useState([]);
 
   const [form] = Form.useForm();
 
@@ -56,15 +58,48 @@ const ClientDetails = () => {
           },
         });
         setClientData(response.data);
-        console.log("Client data:", response.data);
       } catch (error) {
         console.error("Error fetching client data:", error);
       } finally {
         setLoading(false);
       }
     };
+
+    const fetchAnalyses = async () => {
+      try {
+        const response = await axios.get(`/analyse/list/${clientId}`, {
+          headers: { Authorization: `Bearer ${aToken}` },
+        });
+        setAnalyses(response.data || []);
+      } catch (error) {
+        console.error("Error fetching analyses:", error);
+        message.error("Failed to load analysis files.");
+      }
+    };
+
     fetchClientData();
+    fetchAnalyses();
   }, [clientId, aToken]);
+
+  const handleDownload = async (id, fileName) => {
+    try {
+      const response = await axios.get(`/analyse/download/${id}`, {
+        responseType: "blob",
+        headers: { Authorization: `Bearer ${aToken}` },
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Download error:", error);
+      message.error("Failed to download file.");
+    }
+  };
 
   const handleUpdateClient = async (values) => {
     try {
@@ -141,6 +176,12 @@ const ClientDetails = () => {
       );
       message.success("File uploaded successfully.");
       setFile(null);
+
+      const updatedList = await axios.get(`/analyse/list/${clientId}`, {
+        headers: { Authorization: `Bearer ${aToken}` },
+      });
+      setAnalyses(updatedList.data || []);
+      setFileList([]);
     } catch (error) {
       console.error("Upload error:", error);
       message.error("Failed to upload file.");
@@ -177,16 +218,43 @@ const ClientDetails = () => {
     );
   }
 
+  const handleDeleteFile = (fileId, fileName) => {
+    confirm({
+      title: `Are you sure you want to delete "${fileName}"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          await axios.delete(`/analyse/${fileId}`, {
+            headers: { Authorization: `Bearer ${aToken}` },
+          });
+          message.success("File deleted successfully.");
+
+          // Refresh the file list after deletion
+          const updatedList = await axios.get(`/analyse/list/${clientId}`, {
+            headers: { Authorization: `Bearer ${aToken}` },
+          });
+          setAnalyses(updatedList.data || []);
+        } catch (error) {
+          console.error("Delete error:", error);
+          message.error("Failed to delete file.");
+        }
+      },
+    });
+  };
+
   return (
     <Layout style={{ minHeight: "50vh" }}>
       <Content style={{ padding: "20px" }}>
-        <Row justify="center" align="middle" style={{ minHeight: "50vh" }}>
-          <Col>
+        <Row gutter={24} align="top">
+          <Col xs={24} md={12}>
             <Card
               style={{
                 borderRadius: "10px",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-                minWidth: "600px",
+                minWidth: "100%",
               }}
               cover={
                 <div style={{ textAlign: "center", marginTop: "20px" }}>
@@ -250,12 +318,21 @@ const ClientDetails = () => {
               <div style={{ marginTop: "24px" }}>
                 <Title level={5}>Upload Analiz File</Title>
                 <Upload
-                  beforeUpload={handleBeforeUpload}
-                  showUploadList={file ? [{ name: file.name }] : []}
+                  beforeUpload={(file) => {
+                    setFile(file);
+                    setFileList([file]);
+                    return false;
+                  }}
+                  fileList={fileList}
+                  onRemove={() => {
+                    setFile(null);
+                    setFileList([]);
+                  }}
                   maxCount={1}
                 >
                   <Button icon={<UploadOutlined />}>Select File</Button>
                 </Upload>
+
                 <Button
                   type="primary"
                   onClick={handleUpload}
@@ -266,6 +343,55 @@ const ClientDetails = () => {
                   Upload
                 </Button>
               </div>
+            </Card>
+          </Col>
+
+          <Col xs={24} md={12}>
+            <Card
+              title="📂 Uploaded Analyses"
+              style={{
+                borderRadius: "10px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                minHeight: "400px",
+              }}
+            >
+              {analyses.length === 0 ? (
+                <Typography.Text type="secondary">
+                  No analyses found.
+                </Typography.Text>
+              ) : (
+                <ul style={{ padding: 0, listStyle: "none" }}>
+                  {analyses.map((item) => (
+                    <li
+                      key={item.id}
+                      style={{
+                        padding: "10px 15px",
+                        border: "1px solid #f0f0f0",
+                        borderRadius: "6px",
+                        marginBottom: "8px",
+                        backgroundColor: "#fafafa",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        onClick={() => handleDownload(item.id, item.fileName)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        📄 {item.fileName}
+                      </span>
+                      <Button
+                        type="text"
+                        danger
+                        onClick={() => handleDeleteFile(item.id, item.fileName)}
+                      >
+                        Delete
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </Card>
           </Col>
         </Row>
@@ -330,7 +456,6 @@ const ClientDetails = () => {
                 format="YYYY-MM-DD"
               />
             </Form.Item>
-
             <Form.Item
               name="phoneNumber"
               label="Phone Number"

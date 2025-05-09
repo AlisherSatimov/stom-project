@@ -5,7 +5,7 @@ import axios from "axios";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
-  const [expandedRowKeys, setExpandedRowKeys] = useState([]); // Faol kengaytirilgan qatorlar
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const navigate = useNavigate();
   const aToken = localStorage.getItem("aToken");
 
@@ -21,7 +21,7 @@ const Patients = () => {
 
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/patient/find-all", {
+        const response = await axios.get("/patient/find-debt", {
           headers: {
             Authorization: `Bearer ${aToken}`,
           },
@@ -96,10 +96,25 @@ const Patients = () => {
       );
 
       if (response.status === 200) {
-        message.success(response.data);
+        const messageText = response.data;
+        message.success(messageText);
+
+        // 🔍 "qoldi" qismidagi sonni ajratamiz
+        const match = messageText.match(/(\d+)\s*so`m\s*qoldi/i);
+        const remaining = match ? parseInt(match[1], 10) : null;
+
+        console.log("Remaining:", remaining); // debug uchun
+
         setIsModalOpen(false);
         setSelectedPatient(null);
         form.resetFields();
+
+        // Agar qolgan pul 0 bo‘lsa, patientni olib tashlaymiz
+        if (remaining === 0) {
+          setPatients((prev) =>
+            prev.filter((p) => p.id !== selectedPatient.id)
+          );
+        }
       } else {
         message.error("Failed to process payment.");
       }
