@@ -21,7 +21,7 @@ const Patients = () => {
 
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/patient/find-debt", {
+        const response = await axios.get("/patient/find-all", {
           headers: {
             Authorization: `Bearer ${aToken}`,
           },
