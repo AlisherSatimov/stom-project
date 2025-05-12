@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Layout,
@@ -23,7 +23,7 @@ import {
   UploadOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import moment from "moment";
 
 const { Title } = Typography;
@@ -32,62 +32,55 @@ const { Option } = Select;
 const { confirm } = Modal;
 
 const ClientDetails = () => {
+  // Extract clientId from route params
   const { clientId } = useParams();
   const navigate = useNavigate();
+
+  // Component state definitions
   const [clientData, setClientData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [analyses, setAnalyses] = useState([]);
-  const aToken = localStorage.getItem("aToken");
   const [fileList, setFileList] = useState([]);
 
   const [form] = Form.useForm();
 
+  const fetchClientData = async () => {
+    try {
+      const response = await axios.get(`/client/${clientId}`);
+      setClientData(response.data);
+    } catch (error) {
+      console.error("Error fetching client data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const fetchAnalyses = async () => {
+    try {
+      const response = await axios.get(`/analyse/list/${clientId}`);
+      setAnalyses(response.data || []);
+    } catch (error) {
+      console.error("Error fetching analyses:", error);
+      message.error("Failed to load analysis files.");
+    }
+  };
+
+  // Fetch client data and analysis files on mount
   useEffect(() => {
     if (!clientId) {
       console.error("clientId is missing from URL");
       return;
     }
-    const fetchClientData = async () => {
-      try {
-        const response = await axios.get(`/client/${clientId}`, {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
-        setClientData(response.data);
-      } catch (error) {
-        console.error("Error fetching client data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchAnalyses = async () => {
-      try {
-        const response = await axios.get(`/analyse/list/${clientId}`, {
-          headers: { Authorization: `Bearer ${aToken}` },
-        });
-        setAnalyses(response.data || []);
-      } catch (error) {
-        console.error("Error fetching analyses:", error);
-        message.error("Failed to load analysis files.");
-      }
-    };
-
     fetchClientData();
     fetchAnalyses();
-  }, [clientId, aToken]);
+  }, [clientId]);
 
+  // Handle file download
   const handleDownload = async (id, fileName) => {
     try {
-      const response = await axios.get(`/analyse/download/${id}`, {
-        responseType: "blob",
-        headers: { Authorization: `Bearer ${aToken}` },
-      });
-
+      const response = await axios.get(`/analyse/download/${id}`);
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -101,23 +94,24 @@ const ClientDetails = () => {
     }
   };
 
+  // Handle client update (modal submission)
   const handleUpdateClient = async (values) => {
     try {
       const updatedValues = {
         ...values,
-        birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : null,
+        birthday: values.birthday
+          ? values.birthday.format("YYYY-MM-DD") // ISO format for backend
+          : null,
       };
 
-      const response = await axios.put(`/client/${clientId}`, updatedValues, {
-        headers: {
-          Authorization: `Bearer ${aToken}`,
-        },
-      });
+      const response = await axios.put(`/client/${clientId}`, updatedValues);
 
       if (response.status === 200) {
         message.success("Client updated successfully!");
-        setClientData((prev) => ({ ...prev, ...updatedValues }));
         setIsModalOpen(false);
+
+        // ✅ YANGILANGAN MA’LUMOTLARNI QAYTADAN OLISH
+        fetchClientData();
       }
     } catch (error) {
       console.error("Error updating client:", error);
@@ -125,6 +119,7 @@ const ClientDetails = () => {
     }
   };
 
+  // Handle client deletion with confirmation
   const handleDeleteClient = () => {
     confirm({
       title: "Are you sure you want to delete this client?",
@@ -135,11 +130,7 @@ const ClientDetails = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/client/${clientId}`, {
-            headers: {
-              Authorization: `Bearer ${aToken}`,
-            },
-          });
+          const response = await axios.delete(`/client/${clientId}`);
           if (response.status === 200) {
             message.success("Client deleted successfully!");
             navigate("/clients");
@@ -152,11 +143,7 @@ const ClientDetails = () => {
     });
   };
 
-  const handleBeforeUpload = (file) => {
-    setFile(file);
-    return false;
-  };
-
+  // Handle file upload
   const handleUpload = async () => {
     if (!file) return message.warning("Please select a file first.");
     setUploading(true);
@@ -165,21 +152,10 @@ const ClientDetails = () => {
     formData.append("dto", JSON.stringify({ id: clientId }));
 
     try {
-      await axios.post(
-        `https://3dclinic.uz:8085/analyse/upload/${clientId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        }
-      );
+      await axios.post(`/analyse/upload/${clientId}`, formData);
       message.success("File uploaded successfully.");
       setFile(null);
-
-      const updatedList = await axios.get(`/analyse/list/${clientId}`, {
-        headers: { Authorization: `Bearer ${aToken}` },
-      });
+      const updatedList = await axios.get(`/analyse/list/${clientId}`);
       setAnalyses(updatedList.data || []);
       setFileList([]);
     } catch (error) {
@@ -190,6 +166,29 @@ const ClientDetails = () => {
     }
   };
 
+  // Handle file deletion with confirmation
+  const handleDeleteFile = (fileId, fileName) => {
+    confirm({
+      title: `Are you sure you want to delete "${fileName}"?`,
+      icon: <ExclamationCircleOutlined />,
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          await axios.delete(`/analyse/${fileId}`);
+          message.success("File deleted successfully.");
+          const updatedList = await axios.get(`/analyse/list/${clientId}`);
+          setAnalyses(updatedList.data || []);
+        } catch (error) {
+          console.error("Delete error:", error);
+          message.error("Failed to delete file.");
+        }
+      },
+    });
+  };
+
+  // Loading spinner fallback
   if (loading) {
     return (
       <Layout style={{ minHeight: "100vh" }}>
@@ -206,6 +205,7 @@ const ClientDetails = () => {
     );
   }
 
+  // Show fallback message if no client data found
   if (!clientData) {
     return (
       <Layout style={{ minHeight: "100vh" }}>
@@ -218,37 +218,12 @@ const ClientDetails = () => {
     );
   }
 
-  const handleDeleteFile = (fileId, fileName) => {
-    confirm({
-      title: `Are you sure you want to delete "${fileName}"?`,
-      icon: <ExclamationCircleOutlined />,
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      async onOk() {
-        try {
-          await axios.delete(`/analyse/${fileId}`, {
-            headers: { Authorization: `Bearer ${aToken}` },
-          });
-          message.success("File deleted successfully.");
-
-          // Refresh the file list after deletion
-          const updatedList = await axios.get(`/analyse/list/${clientId}`, {
-            headers: { Authorization: `Bearer ${aToken}` },
-          });
-          setAnalyses(updatedList.data || []);
-        } catch (error) {
-          console.error("Delete error:", error);
-          message.error("Failed to delete file.");
-        }
-      },
-    });
-  };
-
+  // Render main layout with client info and file actions
   return (
     <Layout style={{ minHeight: "50vh" }}>
       <Content style={{ padding: "20px" }}>
         <Row gutter={24} align="top">
+          {/* Left column - Client profile info and upload */}
           <Col xs={24} md={12}>
             <Card
               style={{
@@ -272,9 +247,10 @@ const ClientDetails = () => {
                     form.setFieldsValue({
                       ...clientData,
                       birthday: clientData.birthday
-                        ? moment(clientData.birthday, "DD/MM/YYYY", true)
+                        ? moment(clientData.birthday, "DD/MM/YYYY") // parses correctly from string
                         : null,
                     });
+
                     setIsModalOpen(true);
                   }}
                 >
@@ -300,13 +276,12 @@ const ClientDetails = () => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Birthday">
                   {clientData.birthday
-                    ? moment(
-                        clientData.birthday,
-                        ["DD/MM/YYYY", "YYYY-MM-DD"],
-                        true
-                      ).format("DD/MM/YYYY")
+                    ? moment(clientData.birthday, "DD/MM/YYYY").format(
+                        "DD/MM/YYYY"
+                      )
                     : "N/A"}
                 </Descriptions.Item>
+
                 <Descriptions.Item label="Phone Number">
                   {clientData.phoneNumber}
                 </Descriptions.Item>
@@ -315,6 +290,7 @@ const ClientDetails = () => {
                 </Descriptions.Item>
               </Descriptions>
 
+              {/* Upload section */}
               <div style={{ marginTop: "24px" }}>
                 <Title level={5}>Upload Analiz File</Title>
                 <Upload
@@ -346,6 +322,7 @@ const ClientDetails = () => {
             </Card>
           </Col>
 
+          {/* Right column - Uploaded analyses list */}
           <Col xs={24} md={12}>
             <Card
               title="📂 Uploaded Analyses"
@@ -353,6 +330,8 @@ const ClientDetails = () => {
                 borderRadius: "10px",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
                 minHeight: "400px",
+                maxHeight: "500px",
+                overflowY: "auto",
               }}
             >
               {analyses.length === 0 ? (
@@ -360,7 +339,7 @@ const ClientDetails = () => {
                   No analyses found.
                 </Typography.Text>
               ) : (
-                <ul style={{ padding: 0, listStyle: "none" }}>
+                <ul style={{ padding: 0, listStyle: "none", margin: 0 }}>
                   {analyses.map((item) => (
                     <li
                       key={item.id}
@@ -377,7 +356,15 @@ const ClientDetails = () => {
                     >
                       <span
                         onClick={() => handleDownload(item.id, item.fileName)}
-                        style={{ cursor: "pointer" }}
+                        style={{
+                          cursor: "pointer",
+                          maxWidth: "70%",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "inline-block",
+                        }}
+                        title={item.fileName}
                       >
                         📄 {item.fileName}
                       </span>
@@ -396,6 +383,7 @@ const ClientDetails = () => {
           </Col>
         </Row>
 
+        {/* Update client modal */}
         <Modal
           title="Update Client Information"
           open={isModalOpen}
@@ -452,10 +440,10 @@ const ClientDetails = () => {
             >
               <DatePicker
                 style={{ width: "100%" }}
-                open={false}
-                format="YYYY-MM-DD"
+                format="DD/MM/YYYY" // controls how it looks in UI
               />
             </Form.Item>
+
             <Form.Item
               name="phoneNumber"
               label="Phone Number"

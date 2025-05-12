@@ -1,45 +1,35 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Space, Table, Modal, message, Form, Input } from "antd";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 
 const Patients = () => {
+  // States for storing patient data and expanded rows
   const [patients, setPatients] = useState([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-  const navigate = useNavigate();
-  const aToken = localStorage.getItem("aToken");
 
+  // Modal and form states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [form] = Form.useForm();
 
+  // Fetch all patients on component mount
   useEffect(() => {
-    if (!aToken) {
-      navigate("/login");
-      return;
-    }
-
     const fetchPatients = async () => {
       try {
-        const response = await axios.get("/patient/find-debt", {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
-
+        const response = await axios.get("/patient/find-all");
         if (response && response.data) {
+          // Sort by ID descending (latest first)
           setPatients(response.data.sort((a, b) => b.id - a.id));
-          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching patients:", error);
-        alert("Failed to fetch patient data. Please try again later.");
       }
     };
 
     fetchPatients();
-  }, [aToken, navigate]);
+  }, []);
 
+  // Handle "Pay" button click: open modal and prefill form
   const handlePay = (record) => {
     setSelectedPatient(record);
     setIsModalOpen(true);
@@ -51,6 +41,7 @@ const Patients = () => {
     });
   };
 
+  // Handle patient delete confirmation
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this patient?",
@@ -60,12 +51,7 @@ const Patients = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/patient/${id}`, {
-            headers: {
-              Authorization: `Bearer ${aToken}`,
-            },
-          });
-
+          const response = await axios.delete(`/patient/${id}`);
           if (response.status === 200) {
             message.success("Patient deleted successfully!");
             setPatients((prev) => prev.filter((patient) => patient.id !== id));
@@ -80,36 +66,35 @@ const Patients = () => {
     });
   };
 
+  // Handle modal confirmation (submit)
+  const handleOk = () => {
+    form
+      .validateFields()
+      .then((values) => handleModalSubmit(values))
+      .catch((error) => console.error("Validation Failed:", error));
+  };
+
+  // Submit payment and update patient list if fully paid
   const handleModalSubmit = async (values) => {
     try {
-      const response = await axios.post(
-        "/payment/pay",
-        {
-          id: selectedPatient.id,
-          paidValue: values.paidValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        }
-      );
+      const response = await axios.post("/payment/pay", {
+        id: selectedPatient.id,
+        paidValue: values.paidValue,
+      });
 
       if (response.status === 200) {
         const messageText = response.data;
         message.success(messageText);
 
-        // 🔍 "qoldi" qismidagi sonni ajratamiz
+        // Extract remaining amount from message
         const match = messageText.match(/(\d+)\s*so`m\s*qoldi/i);
-        const remaining = match ? parseInt(match[1], 10) : null;
-
-        console.log("Remaining:", remaining); // debug uchun
+        const remaining = match ? parseInt(match[1], 10) : 0;
 
         setIsModalOpen(false);
         setSelectedPatient(null);
         form.resetFields();
 
-        // Agar qolgan pul 0 bo‘lsa, patientni olib tashlaymiz
+        // If patient has paid in full, remove from list
         if (remaining === 0) {
           setPatients((prev) =>
             prev.filter((p) => p.id !== selectedPatient.id)
@@ -124,6 +109,7 @@ const Patients = () => {
     }
   };
 
+  // Main table columns (collapsed view)
   const columns = [
     {
       title: "Client Name",
@@ -148,6 +134,7 @@ const Patients = () => {
     },
   ];
 
+  // Expanded row rendering
   const expandedRowRender = (record) => {
     const expandColumns = [
       {
@@ -168,9 +155,9 @@ const Patients = () => {
         render: (teethServiceEntities) => (
           <>
             {teethServiceEntities.map((service, index) => (
-              <div
-                key={index}
-              >{`${service.teethName}-Teeth: ${service.serviceName} (${service.price})`}</div>
+              <div key={index}>
+                {`${service.teethName}-Teeth: ${service.serviceName} (${service.price})`}
+              </div>
             ))}
           </>
         ),
@@ -239,17 +226,18 @@ const Patients = () => {
 
   return (
     <>
+      {/* Main patients table */}
       <Table
         columns={columns}
         expandable={{
           expandedRowRender,
           expandedRowKeys,
           onExpand: (expanded, record) => {
-            setExpandedRowKeys(expanded ? [record.key] : []);
+            setExpandedRowKeys(expanded ? [record.id] : []);
           },
         }}
         rowClassName={(record) =>
-          expandedRowKeys.includes(record.key)
+          expandedRowKeys.includes(record.id)
             ? "expanded-row pointer-row"
             : "pointer-row"
         }
@@ -257,22 +245,18 @@ const Patients = () => {
         size="middle"
         onRow={(record) => ({
           onClick: () => {
-            const isExpanded = expandedRowKeys.includes(record.key);
-            setExpandedRowKeys(isExpanded ? [] : [record.key]);
+            const isExpanded = expandedRowKeys.includes(record.id);
+            setExpandedRowKeys(isExpanded ? [] : [record.id]);
           },
         })}
       />
 
+      {/* Modal for handling payment */}
       <Modal
         title="Process Payment"
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => handleModalSubmit(values))
-            .catch((error) => console.error("Validation Failed:", error));
-        }}
+        onOk={handleOk}
       >
         <Form form={form} layout="vertical">
           <Form.Item

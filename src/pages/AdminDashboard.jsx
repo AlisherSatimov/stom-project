@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col, Spin, Card } from "antd";
+// Importing React hooks and required UI components
+import { useEffect, useState } from "react";
+import { Row, Col, Spin, Card, message } from "antd";
 import {
   UserOutlined,
   AppstoreOutlined,
   MedicineBoxOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import axios from "axios";
-import SalesCard from "../componets/SalesCard";
+import axios from "../utils/axiosInstance"; // Custom axios instance with token and error handling
+import SalesCard from "../components/SalesCard"; // Reusable card component for showing stats
 import {
   BarChart,
   Bar,
@@ -17,41 +18,55 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts";
+} from "recharts"; // Charting library for visualizations
 
+// Main AdminDashboard component
 const AdminDashboard = () => {
+  // Stores aggregated numeric stats for cards
   const [stats, setStats] = useState({
     clients: null,
     services: null,
     patients: null,
     employees: null,
   });
-  const [monthlyPatients, setMonthlyPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("aToken");
 
+  // Stores chart data for monthly treated patients
+  const [monthlyPatients, setMonthlyPatients] = useState([]);
+
+  // Loading spinner flag while data is being fetched
+  const [loading, setLoading] = useState(true);
+
+  // Month names used for converting numeric months into readable labels
+  const MONTH_NAMES = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  // On component mount, fetch dashboard statistics and chart data
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // Perform all API requests in parallel
         const [clientsRes, servicesRes, patientsRes, employeesRes, monthlyRes] =
           await Promise.all([
-            axios.get("https://3dclinic.uz:8085/client/count-client", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
-            axios.get("https://3dclinic.uz:8085/service/count-services", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
-            axios.get("https://3dclinic.uz:8085/patient/clients", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
-            axios.get("https://3dclinic.uz:8085/employees/count-doctor", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
-            axios.get("https://3dclinic.uz:8085/patient/monthly-appointments", {
-              headers: { Authorization: `Bearer ${token}` },
-            }),
+            axios.get("/client/count-client"),
+            axios.get("/service/count-services"),
+            axios.get("/patient/clients"),
+            axios.get("/employees/count-doctor"),
+            axios.get("/patient/monthly-appointments"),
           ]);
 
+        // Set numeric stats for each card
         setStats({
           clients: clientsRes.data,
           services: servicesRes.data,
@@ -59,38 +74,25 @@ const AdminDashboard = () => {
           employees: employeesRes.data,
         });
 
-        const monthNames = [
-          "",
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-
+        // Format monthly appointment data for the bar chart
         const formattedMonthly = monthlyRes.data.map((item) => ({
-          month: monthNames[item.month],
+          month: MONTH_NAMES[item.month - 1], // Convert month number to short name
           count: item.count,
         }));
 
         setMonthlyPatients(formattedMonthly);
       } catch (error) {
         console.error("Xatolik yuz berdi:", error);
+        message.error("Ma'lumotlarni yuklashda xatolik yuz berdi");
       } finally {
-        setLoading(false);
+        setLoading(false); // Hide spinner when finished
       }
     };
 
     fetchStats();
-  }, [token]);
+  }, []);
 
+  // Array of card details to render overview cards
   const cardsData = [
     { title: "All Clients", amount: stats.clients, icon: UserOutlined },
     { title: "All Services", amount: stats.services, icon: AppstoreOutlined },
@@ -103,35 +105,43 @@ const AdminDashboard = () => {
   ];
 
   return (
+    // Show loading spinner while fetching data
     <Spin spinning={loading}>
+      {/* Statistic overview cards */}
       <Row gutter={[16, 16]} justify="center">
         {cardsData.map((card, index) => (
           <Col key={index} xs={24} sm={12} md={8} lg={6} xl={6}>
             <SalesCard
               title={card.title}
-              amount={card.amount ?? "–"}
+              amount={
+                card.amount !== null && card.amount !== undefined
+                  ? card.amount
+                  : "–" // Fallback if amount is null/undefined
+              }
               icon={card.icon}
             />
           </Col>
         ))}
       </Row>
 
-      {/* Bar Chart – Monthly Treated Patients */}
+      {/* Monthly Treated Patients Bar Chart */}
       <Card
         title="Monthly Treated Patients"
         style={{ marginTop: 24, borderRadius: 8 }}
       >
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={monthlyPatients}
+            data={monthlyPatients} // Data array of months and counts
             margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="count" fill="#82ca9d" name="Patients" />
+            <CartesianGrid strokeDasharray="3 3" />{" "}
+            {/* Light grid background */}
+            <XAxis dataKey="month" /> {/* X-axis showing month names */}
+            <YAxis allowDecimals={false} /> {/* Y-axis showing patient count */}
+            <Tooltip /> {/* Show data on hover */}
+            <Legend /> {/* Chart legend */}
+            <Bar dataKey="count" fill="#82ca9d" name="Patients" />{" "}
+            {/* Bar data */}
           </BarChart>
         </ResponsiveContainer>
       </Card>
@@ -139,4 +149,5 @@ const AdminDashboard = () => {
   );
 };
 
+// Exporting the dashboard component
 export default AdminDashboard;

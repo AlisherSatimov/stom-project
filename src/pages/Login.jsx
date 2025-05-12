@@ -1,12 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Spin, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const authErrorMessage = localStorage.getItem("authErrorMessage");
+    if (authErrorMessage) {
+      message.warning(authErrorMessage);
+      localStorage.removeItem("authErrorMessage"); // faqat bir marta ko‘rsatish uchun
+    }
+  }, []);
 
   const handleLogin = async (values) => {
     setLoading(true);

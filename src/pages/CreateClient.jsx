@@ -1,65 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
   Form,
   Input,
   Radio,
-  Upload,
   message,
   Typography,
   Space,
 } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 
 const { Title } = Typography;
 
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-
 const CreateClient = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
-  let aToken = localStorage.getItem("aToken");
 
-  useEffect(() => {
-    if (!aToken) {
-      navigate("/login");
-    }
-  }, [aToken, navigate]);
-
+  // Handles form submission and sends data to the server
   const handleSubmit = async (values) => {
     const clientData = {
       name: values.name,
       lastName: values.lastName,
       patronymic: values.patronymic,
       gender: values.gender,
-      birthday: values.birthday.format("YYYY-MM-DD"),
+      birthday: values.birthday.format("YYYY-MM-DD"), // Converts to ISO format for backend
       phoneNumber: values.phoneNumber,
       address: values.address,
     };
 
     try {
-      const response = await axios.post(
-        "https://3dclinic.uz:8085/client",
-        clientData,
-        {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await axios.post("/client", clientData);
 
       if (response.status === 200) {
-        message.success(response.data.message);
-        navigate("/clients");
+        message.success(response.data.message); // Notify success
+        navigate("/clients"); // Redirect to clients list
       } else {
         message.error("Something went wrong. Please try again!");
       }
@@ -73,9 +47,12 @@ const CreateClient = () => {
 
   return (
     <div style={{ padding: "40px", maxWidth: "800px", margin: "auto" }}>
+      {/* Page title */}
       <Title level={2} style={{ textAlign: "center", marginBottom: "30px" }}>
         Create New Client
       </Title>
+
+      {/* Client creation form */}
       <Form
         layout="vertical"
         onFinish={handleSubmit}
@@ -86,6 +63,7 @@ const CreateClient = () => {
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
         }}
       >
+        {/* First name */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -97,6 +75,8 @@ const CreateClient = () => {
         >
           <Input size="large" />
         </Form.Item>
+
+        {/* Last name */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -108,6 +88,8 @@ const CreateClient = () => {
         >
           <Input size="large" />
         </Form.Item>
+
+        {/* Patronymic */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -119,6 +101,8 @@ const CreateClient = () => {
         >
           <Input size="large" />
         </Form.Item>
+
+        {/* Gender radio buttons */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>Gender</span>
@@ -135,6 +119,8 @@ const CreateClient = () => {
             </Radio>
           </Radio.Group>
         </Form.Item>
+
+        {/* Birthday picker */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -146,6 +132,8 @@ const CreateClient = () => {
         >
           <DatePicker size="large" style={{ width: "100%" }} />
         </Form.Item>
+
+        {/* Phone number input */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -167,6 +155,8 @@ const CreateClient = () => {
         >
           <Input size="large" placeholder="+998912345678" />
         </Form.Item>
+
+        {/* Address input */}
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -178,6 +168,8 @@ const CreateClient = () => {
         >
           <Input size="large" />
         </Form.Item>
+
+        {/* Submit and Reset buttons */}
         <Form.Item>
           <Space style={{ width: "100%", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" size="large">

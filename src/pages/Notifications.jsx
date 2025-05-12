@@ -1,29 +1,22 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Button, Spin, message, Row, Col, Modal } from "antd";
-import axios from "axios";
-import moment from "moment";
+import axios from "../utils/axiosInstance";
 
 const Notifications = () => {
+  // State to store fetched notifications
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const aToken = localStorage.getItem("aToken");
 
+  // State to handle loading spinner
+  const [loading, setLoading] = useState(true);
+
+  // Fetch notifications from backend when component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get("/notification/find-all", {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
+        const response = await axios.get("/notification/find-all");
 
         if (response.status === 200 && Array.isArray(response.data)) {
-          const today = moment().format("DD/MM/YYYY");
-          const filteredNotifications = response.data.filter(
-            (notification) => notification.nextVisit === today
-          );
-          setNotifications(response.data);
-          // setNotifications(filteredNotifications); // filterni ishga tushirish
+          setNotifications(response.data); // Set received data into state
         } else {
           message.warning("No notifications available.");
         }
@@ -31,23 +24,22 @@ const Notifications = () => {
         console.error("Error fetching notifications:", error);
         message.error("Failed to fetch notifications.");
       } finally {
-        setLoading(false);
+        setLoading(false); // Hide spinner regardless of success or failure
       }
     };
 
     fetchNotifications();
-  }, [aToken]);
+  }, []);
 
+  // Handles deletion of a single notification by ID
   const handleDeleteNotification = async (id) => {
     try {
-      const response = await axios.delete(`/notification/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${aToken}`,
-        },
-      });
+      const response = await axios.delete(`/notification/delete/${id}`);
 
       if (response.status === 200) {
         message.success("Notification deleted successfully!");
+
+        // Update state by removing the deleted item
         setNotifications((prev) =>
           prev.filter((notification) => notification.id !== id)
         );
@@ -60,6 +52,7 @@ const Notifications = () => {
     }
   };
 
+  // Show confirmation modal before deleting
   const confirmDelete = (id) => {
     Modal.confirm({
       title: "Are you sure?",
@@ -67,10 +60,11 @@ const Notifications = () => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk: () => handleDeleteNotification(id),
+      onOk: () => handleDeleteNotification(id), // Proceed if user confirms
     });
   };
 
+  // Show loading spinner while fetching notifications
   if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -81,6 +75,7 @@ const Notifications = () => {
 
   return (
     <div style={{ padding: "20px" }}>
+      {/* Display message when there are no notifications */}
       {notifications.length === 0 ? (
         <div style={{ textAlign: "center", marginTop: "50px" }}>
           <p style={{ fontSize: "18px", fontWeight: "bold" }}>
@@ -88,6 +83,7 @@ const Notifications = () => {
           </p>
         </div>
       ) : (
+        // Display all notifications using Ant Design's grid system
         <Row gutter={[16, 16]}>
           {notifications.map((notification) => (
             <Col key={notification.id} xs={24} sm={12} md={8} lg={6}>
@@ -113,6 +109,7 @@ const Notifications = () => {
                   overflow: "hidden",
                 }}
               >
+                {/* Display phone number and next visit date */}
                 <p style={{ marginBottom: 8 }}>
                   <strong>Phone Number:</strong> {notification.phoneNumber}
                 </p>

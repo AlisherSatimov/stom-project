@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Layout,
@@ -19,7 +19,7 @@ import {
   Table,
 } from "antd";
 import { UserOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import moment from "moment";
 
 const { Title } = Typography;
@@ -50,14 +50,12 @@ const EmployeeID = () => {
     dentistShare: 0,
   });
 
+  const CURRENCY = "so'm";
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const empRes = await axios.get(`/employees/${employeeId}`, {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
+        const empRes = await axios.get(`/employees/${employeeId}`);
         setEmployeeData(empRes.data);
         form.setFieldsValue({
           ...empRes.data,
@@ -66,20 +64,17 @@ const EmployeeID = () => {
 
         // ROLE_USER bo'lsa, bemorlarni olish
         if (empRes.data.role === "ROLE_USER") {
-          const patRes = await axios.get(
-            `https://3dclinic.uz:8085/patient/doctor/${employeeId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${aToken}`,
-              },
-            }
-          );
+          const patRes = await axios.get(`/patient/doctor/${employeeId}`, {
+            headers: {
+              Authorization: `Bearer ${aToken}`,
+            },
+          });
           const sorted = patRes.data.sort((a, b) => b.id - a.id);
           setPatients(sorted);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        message.error("Failed to fetch data.");
+        message.error("Failed to fetch employee or patient data.");
       } finally {
         setLoading(false);
       }
@@ -162,20 +157,25 @@ const EmployeeID = () => {
       return createdMs >= startMs && createdMs <= endMs;
     });
 
-    const totalIncome = filtered.reduce((sum, p) => {
-      return (
-        sum + (p.teethServiceEntities?.reduce((s, s2) => s + s2.price, 0) || 0)
-      );
-    }, 0);
+    const totals = filtered.reduce(
+      (acc, p) => {
+        const income =
+          p.teethServiceEntities?.reduce((s, s2) => s + s2.price, 0) || 0;
+        const expense = p.expense || 0;
+        acc.totalIncome += income;
+        acc.totalExpense += expense;
+        return acc;
+      },
+      { totalIncome: 0, totalExpense: 0 }
+    );
 
-    const totalExpense = filtered.reduce((sum, p) => sum + (p.expense || 0), 0);
-    const netProfit = totalIncome - totalExpense;
+    const netProfit = totals.totalIncome - totals.totalExpense;
     const dentistShare = (netProfit * reportStats.percent) / 100;
 
     setReportStats({
       totalPatients: filtered.length,
-      totalIncome,
-      totalExpense,
+      totalIncome: totals.totalIncome,
+      totalExpense: totals.totalExpense,
       netProfit,
       percent: reportStats.percent,
       dentistShare,
@@ -308,12 +308,13 @@ const EmployeeID = () => {
                       record.teethServiceEntities.reduce(
                         (sum, s) => sum + s.price,
                         0
-                      ) + " so'm",
+                      ) + ` ${CURRENCY}`,
                   },
                   {
                     title: "Expense",
                     dataIndex: "expense",
-                    render: (value) => (value ? value + " so'm" : "0 so'm"),
+                    render: (value) =>
+                      value ? value + ` ${CURRENCY}` : ` ${CURRENCY}`,
                   },
                 ]}
                 onRow={(record) => ({

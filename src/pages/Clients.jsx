@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -13,41 +13,32 @@ import {
 } from "antd";
 import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../utils/axiosInstance";
 import { useClient } from "../context/ClientContext";
 
 const { confirm } = Modal;
 const { Option } = Select;
 
 const Clients = () => {
+  // === STATE MANAGEMENT ===
   const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
-  const searchInput = useRef(null);
+
   const navigate = useNavigate();
   const { setClientId } = useClient();
-  const aToken = localStorage.getItem("aToken");
 
+  // === FETCH CLIENT AND EMPLOYEE DATA ON LOAD ===
   useEffect(() => {
-    if (!aToken) {
-      navigate("/login");
-      return;
-    }
-
     const fetchClients = async () => {
       try {
-        const response = await axios.get("/client", {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
-
+        const response = await axios.get("/client");
         if (response && response.data) {
           const formattedData = response.data
-            .sort((a, b) => b.id - a.id) //
+            .sort((a, b) => b.id - a.id)
             .map((item) => ({
               key: item.id,
               name: `${item.name} ${item.lastName} ${item.patronymic}`,
@@ -56,23 +47,17 @@ const Clients = () => {
               phoneNumber: item.phoneNumber || "N/A",
               address: item.address || "N/A",
             }));
-
           setClients(formattedData);
         }
       } catch (error) {
         console.error("Error fetching clients:", error);
-        alert("Failed to fetch client data. Please try again later.");
+        message.error("Failed to fetch client data.");
       }
     };
 
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("/employees", {
-          headers: {
-            Authorization: `Bearer ${aToken}`,
-          },
-        });
-
+        const response = await axios.get("/employees");
         if (response && response.data) {
           const filteredEmployees = response.data.filter(
             (employee) => employee.role === "ROLE_USER"
@@ -81,14 +66,15 @@ const Clients = () => {
         }
       } catch (error) {
         console.error("Error fetching employees:", error);
-        alert("Failed to fetch employees. Please try again later.");
+        message.error("Failed to fetch employees. Please try again later.");
       }
     };
 
     fetchClients();
     fetchEmployees();
-  }, [aToken, navigate]);
+  }, [navigate]);
 
+  // === SEARCH AND FILTER HANDLERS ===
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -100,6 +86,7 @@ const Clients = () => {
     setSearchText("");
   };
 
+  // === SEARCH CONFIGURATION FOR TABLE COLUMNS ===
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -109,7 +96,7 @@ const Clients = () => {
     }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
-          ref={searchInput}
+          autoFocus
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
@@ -156,15 +143,17 @@ const Clients = () => {
       ),
   });
 
+  // === HANDLE CLIENT ROW CLICK ===
   const handleClientClick = (clientId) => {
     if (!clientId) {
       console.error("Client ID is undefined");
       return;
     }
-    setClientId(clientId); // Context orqali client ID ni o'rnatish
-    navigate(`/clientID/${clientId}`); // Client sahifasiga parametr bilan yo'naltirish
+    setClientId(clientId); // Store clientId in context
+    navigate(`/clientID/${clientId}`); // Navigate to detail page
   };
 
+  // === DELETE CLIENT WITH CONFIRMATION MODAL ===
   const handleDelete = (clientId) => {
     confirm({
       title: "Are you sure you want to delete this client?",
@@ -175,12 +164,7 @@ const Clients = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/client/${clientId}`, {
-            headers: {
-              Authorization: `Bearer ${aToken}`,
-            },
-          });
-
+          const response = await axios.delete(`/client/${clientId}`);
           if (response.status === 200) {
             message.success("Client deleted successfully!");
             setClients((prev) =>
@@ -200,11 +184,13 @@ const Clients = () => {
     });
   };
 
+  // === HANDLE QUEUE MODAL OPEN ===
   const handleAddQueue = (client) => {
     setSelectedClient(client);
     setIsModalVisible(true);
   };
 
+  // === HANDLE QUEUE FORM SUBMISSION ===
   const handleModalOk = async (values) => {
     const payload = {
       employeeId: values.employeeId,
@@ -214,13 +200,7 @@ const Clients = () => {
     };
 
     try {
-      const response = await axios.post("/patient/create", payload, {
-        headers: {
-          Authorization: `Bearer ${aToken}`,
-          "Content-Type": "application/json",
-        },
-      });
-
+      const response = await axios.post("/patient/create", payload);
       if (response.status === 200) {
         message.success("Queue successfully created!");
         setIsModalVisible(false);
@@ -233,6 +213,7 @@ const Clients = () => {
     }
   };
 
+  // === TABLE COLUMN DEFINITIONS ===
   const columns = [
     {
       title: "Name",
@@ -273,31 +254,36 @@ const Clients = () => {
       title: "Action",
       key: "operation",
       width: "15%",
-
       render: (_, record) => (
         <Space size="middle">
           <a
-            className="text-green-500"
-            onClick={() => handleAddQueue(record)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddQueue(record);
+            }}
             style={{
               cursor: "pointer",
               border: "1px solid green",
               padding: "8px 16px",
               borderRadius: "5px",
               backgroundColor: "#18ff331e",
+              color: "green",
             }}
           >
             Add_Queue
           </a>
           <a
-            className="text-red-500"
-            onClick={() => handleDelete(record.key)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(record.key);
+            }}
             style={{
               cursor: "pointer",
               border: "1px solid red",
               padding: "8px 28px",
               borderRadius: "5px",
               backgroundColor: "#ff181809",
+              color: "red",
             }}
           >
             Delete
@@ -307,27 +293,14 @@ const Clients = () => {
     },
   ];
 
+  // === RENDER TABLE AND MODAL FORM ===
   return (
     <>
       <Table
         columns={columns}
         dataSource={clients}
         onRow={(record) => ({
-          onClick: (e) => {
-            const target = e.target;
-
-            if (
-              target.tagName === "BUTTON" ||
-              target.closest("button") ||
-              target.tagName === "A" ||
-              target.closest("a") ||
-              target.tagName === "svg" ||
-              target.closest(".ant-btn")
-            ) {
-              return;
-            }
-            handleClientClick(record.key);
-          },
+          onClick: () => handleClientClick(record.key),
           style: { cursor: "pointer" },
         })}
       />
@@ -337,6 +310,7 @@ const Clients = () => {
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
+        destroyOnClose
       >
         <Form onFinish={handleModalOk}>
           <Form.Item
@@ -347,7 +321,7 @@ const Clients = () => {
             <Select placeholder="Select an employee">
               {employees.map((employee) => (
                 <Option key={employee.id} value={employee.id}>
-                  {`${employee.firstName} ${employee.lastName}`}
+                  {`${employee?.firstName || ""} ${employee?.lastName || ""}`}
                 </Option>
               ))}
             </Select>
