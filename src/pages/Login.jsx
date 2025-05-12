@@ -22,7 +22,7 @@ export const Login = () => {
     const apiType = "WEB";
 
     try {
-      const response = await axios.post("https://3dclinic.uz:8085/auth/login", {
+      const response = await axios.post("/auth/login", {
         login: login,
         password: password,
         apiType: apiType,
