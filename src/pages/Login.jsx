@@ -22,11 +22,14 @@ export const Login = () => {
     const apiType = "WEB";
 
     try {
-      const response = await axios.post("/auth/login", {
-        login: login,
-        password: password,
-        apiType: apiType,
-      });
+      const response = await axios.post(
+        "https://stom-project.vercel.app/auth/login",
+        {
+          login: login,
+          password: password,
+          apiType: apiType,
+        }
+      );
       let fName = response.data.firstName + "";
       let lName = response.data.lastName + "";
       let aToken = response.data.token;
