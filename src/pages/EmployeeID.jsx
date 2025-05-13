@@ -387,11 +387,13 @@ const EmployeeID = () => {
             <Form.Item
               name="birthDay"
               label="BirthDay"
-              rules={[
-                { required: true, message: "Please select the birthday" },
-              ]}
+              rules={[{ required: false }]}
             >
-              <DatePicker format="YYYY-MM-DD" style={{ width: "100%" }} />
+              <DatePicker
+                format="YYYY-MM-DD"
+                style={{ width: "100%" }}
+                disabled
+              />
             </Form.Item>
 
             <Form.Item name="address" label="Address">

@@ -434,11 +434,10 @@ const ClientDetails = () => {
             <Form.Item
               name="birthday"
               label="Birthday"
-              rules={[
-                { required: true, message: "Please select the birthday!" },
-              ]}
+              rules={[{ required: false }]}
             >
               <DatePicker
+                disabled
                 style={{ width: "100%" }}
                 format="DD/MM/YYYY" // controls how it looks in UI
               />

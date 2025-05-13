@@ -50,7 +50,6 @@ export const Login = () => {
       }
     } catch (error) {
       console.error("Login failed", error.response.data.error);
-      message.error(`Login failed: ${error.response.data.error}`);
     } finally {
       setLoading(false);
     }
