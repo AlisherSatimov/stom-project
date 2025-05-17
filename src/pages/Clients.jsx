@@ -15,6 +15,7 @@ import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { useClient } from "../context/ClientContext";
+import dayjs from "dayjs"; // yuqorida import qilingan bo‘lishi kerak
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -23,21 +24,34 @@ const Clients = () => {
   // === STATE MANAGEMENT ===
   const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [canSubmit, setCanSubmit] = useState(false);
+
+  const [form] = Form.useForm();
 
   const navigate = useNavigate();
   const { setClientId } = useClient();
 
-  // === FETCH CLIENT AND EMPLOYEE DATA ON LOAD ===
+  // === LOAD CLIENT, EMPLOYEE AND APPOINTMENT DATA ===
   useEffect(() => {
-    const fetchClients = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await axios.get("/client");
-        if (response && response.data) {
-          const formattedData = response.data
+        const [clientRes, employeeRes, appointmentRes] = await Promise.all([
+          axios.get("/client"),
+          axios.get("/employees"),
+          axios.get("/patient/find-all-after"),
+        ]);
+
+        // === Format and set clients ===
+        if (clientRes.data) {
+          const formattedData = clientRes.data
             .sort((a, b) => b.id - a.id)
             .map((item) => ({
               key: item.id,
@@ -49,30 +63,44 @@ const Clients = () => {
             }));
           setClients(formattedData);
         }
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-        message.error("Failed to fetch client data.");
-      }
-    };
 
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get("/employees");
-        if (response && response.data) {
-          const filteredEmployees = response.data.filter(
+        // === Filter and set employees (only ROLE_USER) ===
+        if (employeeRes.data) {
+          const filteredEmployees = employeeRes.data.filter(
             (employee) => employee.role === "ROLE_USER"
           );
           setEmployees(filteredEmployees);
         }
+
+        // === Set appointments ===
+        if (appointmentRes.data) {
+          setAppointments(appointmentRes.data);
+        }
       } catch (error) {
-        console.error("Error fetching employees:", error);
-        message.error("Failed to fetch employees. Please try again later.");
+        console.error("Error loading initial data:", error);
+        message.error("Failed to load initial data.");
       }
     };
 
-    fetchClients();
-    fetchEmployees();
+    fetchInitialData();
   }, [navigate]);
+
+  // === HANDLE SLOT SELECTION AND FORM UPDATE ===
+  useEffect(() => {
+    if (selectedSlots.length >= 2) {
+      const sorted = [...selectedSlots].sort((a, b) => a.datetime - b.datetime);
+      form.setFieldsValue({
+        appointmentTime: [
+          dayjs(sorted[0].datetime),
+          dayjs(sorted[sorted.length - 1].datetime),
+        ],
+      });
+      setCanSubmit(true); // ✅ Submit faollashadi
+    } else {
+      form.setFieldsValue({ appointmentTime: null });
+      setCanSubmit(false); // ❌ Submit o‘chadi
+    }
+  }, [selectedSlots]);
 
   // === SEARCH AND FILTER HANDLERS ===
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -178,25 +206,132 @@ const Clients = () => {
           message.error("An error occurred while deleting the client.");
         }
       },
-      onCancel() {
-        console.log("Delete action canceled.");
-      },
     });
   };
 
-  // === HANDLE QUEUE MODAL OPEN ===
-  const handleAddQueue = (client) => {
+  // === GENERATE TIME SLOTS FOR SELECTED DATE ===
+  const generateSlots = (employeeId, dateStr) => {
+    const allSlots = [];
+    const start = new Date(`${dateStr}T09:00`);
+    const end = new Date(`${dateStr}T18:00`);
+
+    let current = new Date(start);
+    while (current < end) {
+      const hour = current.getHours();
+      const minute = current.getMinutes();
+      const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(
+        2,
+        "0"
+      )}`;
+
+      if (!(hour === 12)) {
+        allSlots.push({
+          time,
+          datetime: new Date(current),
+          busy: false,
+        });
+      }
+
+      current.setMinutes(current.getMinutes() + 10);
+    }
+
+    // Band vaqtlarni belgilang
+    const targetDate = dayjs(dateStr).format("YYYY-MM-DD");
+
+    const busyAppointments = appointments.filter(
+      (a) =>
+        a.empId === employeeId &&
+        dayjs(a.appointmentTime, "DD/MM/YYYY HH:mm").format("YYYY-MM-DD") ===
+          targetDate
+    );
+
+    busyAppointments.forEach((item) => {
+      const start = dayjs(item.appointmentTime, "DD/MM/YYYY HH:mm").toDate();
+      const end = dayjs(item.endTime, "DD/MM/YYYY HH:mm").toDate();
+
+      allSlots.forEach((slot) => {
+        if (slot.datetime >= start && slot.datetime < end) {
+          slot.busy = true;
+        }
+      });
+    });
+
+    return allSlots;
+  };
+
+  // === HANDLE SLOT CLICK ===
+  const handleSlotClick = (clickedSlot, allSlots) => {
+    if (clickedSlot.busy) return;
+
+    const isSelected = selectedSlots.some((s) => s.time === clickedSlot.time);
+
+    if (isSelected) {
+      // Toggle slot off
+      setSelectedSlots((prev) =>
+        prev.filter((s) => s.time !== clickedSlot.time)
+      );
+      return;
+    }
+
+    if (selectedSlots.length === 1) {
+      const first = selectedSlots[0].datetime;
+      const second = clickedSlot.datetime;
+
+      const range = allSlots.filter((slot) => {
+        const d = slot.datetime;
+        return (d >= first && d <= second) || (d >= second && d <= first);
+      });
+
+      const hasBusy = range.some((slot) => slot.busy);
+
+      if (hasBusy) {
+        message.warning("You can't select a range that includes busy slots.");
+        return;
+      }
+
+      setSelectedSlots(range);
+    } else {
+      setSelectedSlots([clickedSlot]);
+    }
+  };
+
+  // === OPEN MODAL TO ADD PATIENT TO QUEUE ===
+  const handleAddQueue = async (client) => {
     setSelectedClient(client);
     setIsModalVisible(true);
+
+    try {
+      const response = await axios.get("/patient/find-all-after");
+      if (response.data) {
+        setAppointments(response.data); // ✅ backenddan yangilash
+      }
+    } catch (error) {
+      message.error("Failed to load appointment data.");
+    }
   };
 
   // === HANDLE QUEUE FORM SUBMISSION ===
+
+  const resetModalState = () => {
+    form.resetFields();
+    setSelectedDate(null);
+    setSelectedSlots([]);
+    setCanSubmit(false);
+    setSelectedClient(null);
+  };
+
   const handleModalOk = async (values) => {
     const payload = {
       employeeId: values.employeeId,
       clientId: selectedClient.key,
-      appointmentTime: values.appointmentTime[0].toISOString(),
-      endTime: values.appointmentTime[1].toISOString(),
+      appointmentTime: dayjs(values.appointmentTime[0])
+        .add(5, "hour")
+        .toDate()
+        .toISOString(),
+      endTime: dayjs(values.appointmentTime[1])
+        .add(5, "hour")
+        .toDate()
+        .toISOString(),
     };
 
     try {
@@ -204,6 +339,7 @@ const Clients = () => {
       if (response.status === 200) {
         message.success("Queue successfully created!");
         setIsModalVisible(false);
+        resetModalState(); // ✅ Clear modal state
       } else {
         message.error("Failed to create queue.");
       }
@@ -308,17 +444,31 @@ const Clients = () => {
       <Modal
         title="Add Queue"
         open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          resetModalState(); // ✅ Clear modal on cancel too
+        }}
         footer={null}
         destroyOnClose
       >
-        <Form onFinish={handleModalOk}>
+        <Form form={form} onFinish={handleModalOk}>
           <Form.Item
             name="employeeId"
             label="Employee"
             rules={[{ required: true, message: "Please select an employee!" }]}
           >
-            <Select placeholder="Select an employee">
+            <Select
+              placeholder="Select an employee"
+              onChange={(value) => {
+                // reset date and selected slots when employee changes
+                setSelectedDate(null);
+                setSelectedSlots([]);
+                form.setFieldsValue({
+                  appointmentTime: null,
+                });
+                setCanSubmit(false); // submit buttonni o‘chirib qo‘yamiz
+              }}
+            >
               {employees.map((employee) => (
                 <Option key={employee.id} value={employee.id}>
                   {`${employee?.firstName || ""} ${employee?.lastName || ""}`}
@@ -327,16 +477,52 @@ const Clients = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="appointmentTime"
-            label="Appointment Time"
-            rules={[{ required: true, message: "Please select time!" }]}
-          >
-            <DatePicker.RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+          <Form.Item label="Appointment Date" name="appointmentTime" required>
+            <DatePicker
+              style={{ width: "100%" }}
+              disabledDate={(current) =>
+                current && current < new Date().setHours(0, 0, 0, 0)
+              }
+              onChange={(date) => setSelectedDate(date)}
+            />
           </Form.Item>
 
+          {selectedDate && selectedClient && (
+            <div style={{ overflowY: "auto", marginBottom: 16 }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                  justifyContent: "center", // Ichki elementlar ham o‘rtada
+                  maxWidth: 500, // Maksimal kenglik (ixtiyoriy)
+                }}
+              >
+                {generateSlots(
+                  selectedClient.employeeId || form.getFieldValue("employeeId"),
+                  selectedDate.format("YYYY-MM-DD")
+                ).map((slot, index, allSlots) => (
+                  <Button
+                    key={slot.time}
+                    type={
+                      slot.busy
+                        ? "default"
+                        : selectedSlots.some((s) => s.time === slot.time)
+                        ? "primary"
+                        : "default"
+                    }
+                    disabled={slot.busy}
+                    onClick={() => handleSlotClick(slot, allSlots)}
+                  >
+                    {slot.time}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" disabled={!canSubmit}>
               Submit
             </Button>
           </Form.Item>
