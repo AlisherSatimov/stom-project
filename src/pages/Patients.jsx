@@ -1,44 +1,63 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Badge, Space, Table, Modal, message, Form, Input } from "antd";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
 
 const Patients = () => {
-  // States for storing patient data and expanded rows
-  const [patients, setPatients] = useState([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-
-  // Modal and form states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [form] = Form.useForm();
-
-  // State to keep track of remaining debt
   const [maxDebt, setMaxDebt] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
 
-  // Fetch all patients on component mount
-  useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get("/patient/find-all");
-        if (response && response.data) {
-          // Sort by ID descending (latest first)
-          setPatients(response.data.sort((a, b) => b.id - a.id));
-        }
-      } catch (error) {
-        console.error("Error fetching patients:", error);
+  const queryClient = useQueryClient();
+
+  const { data: patients = [], isLoading } = useQuery({
+    queryKey: ["patients"],
+    queryFn: async () => {
+      const response = await axios.get("/patient/find-all");
+      return response.data.sort((a, b) => b.id - a.id);
+    },
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => axios.delete(`/patient/${id}`),
+    onSuccess: () => {
+      message.success("Patient deleted successfully!");
+      queryClient.invalidateQueries(["patients"]);
+    },
+    onError: () => {
+      message.error("An error occurred while deleting the patient.");
+    },
+  });
+
+  const paymentMutation = useMutation({
+    mutationFn: (data) => axios.post("/payment/pay", data),
+    onSuccess: (response) => {
+      const messageText = response.data;
+      message.success(messageText);
+      const match = messageText.match(/(\d+)\s*so`m\s*qoldi/i);
+      const remaining = match ? parseInt(match[1], 10) : 0;
+      setIsModalOpen(false);
+      setSelectedPatient(null);
+      form.resetFields();
+      if (remaining === 0) {
+        queryClient.invalidateQueries(["patients"]);
       }
-    };
+    },
+    onError: () => {
+      message.error("An error occurred while processing payment.");
+    },
+  });
 
-    fetchPatients();
-  }, []);
-
-  // Handle "Pay" button click: open modal and prefill form
   const handlePay = async (record) => {
     setSelectedPatient(record);
     setIsModalOpen(true);
-
     try {
       const total = record.teethServiceEntities.reduce(
         (total, service) => total + service.price,
@@ -48,7 +67,6 @@ const Patients = () => {
       const paymentHistory = response?.data || [];
       const paid = paymentHistory.reduce((sum, entry) => sum + entry.paid, 0);
       const remaining = total - paid;
-
       setTotalPrice(total);
       setTotalPaid(paid);
       setMaxDebt(remaining);
@@ -63,7 +81,6 @@ const Patients = () => {
     }
   };
 
-  // Handle patient delete confirmation
   const handleDelete = async (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this patient?",
@@ -71,67 +88,22 @@ const Patients = () => {
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk: async () => {
-        try {
-          const response = await axios.delete(`/patient/${id}`);
-          if (response.status === 200) {
-            message.success("Patient deleted successfully!");
-            setPatients((prev) => prev.filter((patient) => patient.id !== id));
-          } else {
-            message.error("Failed to delete the patient.");
-          }
-        } catch (error) {
-          console.error("Error deleting patient:", error);
-          message.error("An error occurred while deleting the patient.");
-        }
-      },
+      onOk: () => deleteMutation.mutate(id),
     });
   };
 
-  // Handle modal confirmation (submit)
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => handleModalSubmit(values))
+      .then((values) => {
+        paymentMutation.mutate({
+          id: selectedPatient.id,
+          paidValue: values.paidValue,
+        });
+      })
       .catch((error) => console.error("Validation Failed:", error));
   };
 
-  // Submit payment and update patient list if fully paid
-  const handleModalSubmit = async (values) => {
-    try {
-      const response = await axios.post("/payment/pay", {
-        id: selectedPatient.id,
-        paidValue: values.paidValue,
-      });
-
-      if (response.status === 200) {
-        const messageText = response.data;
-        message.success(messageText);
-
-        // Extract remaining amount from message
-        const match = messageText.match(/(\d+)\s*so`m\s*qoldi/i);
-        const remaining = match ? parseInt(match[1], 10) : 0;
-
-        setIsModalOpen(false);
-        setSelectedPatient(null);
-        form.resetFields();
-
-        // If patient has paid in full, remove from list
-        if (remaining === 0) {
-          setPatients((prev) =>
-            prev.filter((p) => p.id !== selectedPatient.id)
-          );
-        }
-      } else {
-        message.error("Failed to process payment.");
-      }
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      message.error("An error occurred while processing payment.");
-    }
-  };
-
-  // Main table columns (collapsed view)
   const columns = [
     {
       title: "Client Name",
@@ -156,7 +128,6 @@ const Patients = () => {
     },
   ];
 
-  // Expanded row rendering
   const expandedRowRender = (record) => {
     const expandColumns = [
       {
@@ -248,7 +219,6 @@ const Patients = () => {
 
   return (
     <>
-      {/* Main patients table */}
       <Table
         columns={columns}
         expandable={{
@@ -271,16 +241,15 @@ const Patients = () => {
             setExpandedRowKeys(isExpanded ? [] : [record.id]);
           },
         })}
+        loading={isLoading}
       />
 
-      {/* Modal for handling payment */}
       <Modal
         title="Process Payment"
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={handleOk}
       >
-        {/* Summary box */}
         <div
           style={{
             marginBottom: 16,

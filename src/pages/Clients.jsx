@@ -16,13 +16,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 import { useClient } from "../context/ClientContext";
 import dayjs from "dayjs"; // yuqorida import qilingan bo‘lishi kerak
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { confirm } = Modal;
 const { Option } = Select;
 
 const Clients = () => {
   // === STATE MANAGEMENT ===
-  const [clients, setClients] = useState([]);
+  // const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [appointments, setAppointments] = useState([]);
 
@@ -39,30 +40,37 @@ const Clients = () => {
   const navigate = useNavigate();
   const { setClientId } = useClient();
 
+  const useClients = () => {
+    return useQuery({
+      queryKey: ["clients"],
+      queryFn: async () => {
+        const response = await axios.get("/client");
+        return response.data
+          .sort((a, b) => b.id - a.id)
+          .map((item) => ({
+            key: item.id,
+            name: `${item.name} ${item.lastName} ${item.patronymic}`,
+            birthday: item.birthday || "N/A",
+            gender: item.gender,
+            phoneNumber: item.phoneNumber || "N/A",
+            address: item.address || "N/A",
+          }));
+      },
+      staleTime: 0,
+    });
+  };
+
+  const { data: clients, isLoading, isError } = useClients();
+  const queryClient = useQueryClient(); // invalidate uchun kerak
+
   // === LOAD CLIENT, EMPLOYEE AND APPOINTMENT DATA ===
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [clientRes, employeeRes, appointmentRes] = await Promise.all([
-          axios.get("/client"),
+        const [employeeRes, appointmentRes] = await Promise.all([
           axios.get("/employees"),
           axios.get("/patient/find-all-after"),
         ]);
-
-        // === Format and set clients ===
-        if (clientRes.data) {
-          const formattedData = clientRes.data
-            .sort((a, b) => b.id - a.id)
-            .map((item) => ({
-              key: item.id,
-              name: `${item.name} ${item.lastName} ${item.patronymic}`,
-              birthday: item.birthday || "N/A",
-              gender: item.gender,
-              phoneNumber: item.phoneNumber || "N/A",
-              address: item.address || "N/A",
-            }));
-          setClients(formattedData);
-        }
 
         // === Filter and set employees (only ROLE_USER) ===
         if (employeeRes.data) {
@@ -195,9 +203,7 @@ const Clients = () => {
           const response = await axios.delete(`/client/${clientId}`);
           if (response.status === 200) {
             message.success("Client deleted successfully!");
-            setClients((prev) =>
-              prev.filter((client) => client.key !== clientId)
-            );
+            queryClient.invalidateQueries(["clients"]); // 🔄 cache yangilanadi
           } else {
             message.error("Failed to delete client.");
           }
@@ -435,6 +441,7 @@ const Clients = () => {
       <Table
         columns={columns}
         dataSource={clients}
+        loading={isLoading}
         onRow={(record) => ({
           onClick: () => handleClientClick(record.key),
           style: { cursor: "pointer" },
