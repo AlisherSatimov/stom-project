@@ -226,7 +226,10 @@ const EmployeeID = () => {
   return (
     <Layout style={{ minHeight: "50vh" }}>
       <Content style={{ padding: "20px" }}>
-        <Row gutter={24}>
+        <Row
+          gutter={24}
+          justify={employeeData.role !== "ROLE_USER" ? "center" : undefined}
+        >
           <Col xs={24} md={12}>
             <Card
               style={{

@@ -1,5 +1,4 @@
 // Importing React hook and necessary Ant Design components
-import { useEffect } from "react";
 import {
   Button,
   DatePicker,
@@ -19,14 +18,6 @@ const { Option } = Select;
 
 const CreateEmployee = () => {
   const navigate = useNavigate();
-
-  // Redirect to login if no authentication token is found
-  useEffect(() => {
-    const token = localStorage.getItem("aToken");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
 
   // Handler function to submit the form
   const handleSubmit = async (values) => {
@@ -68,7 +59,9 @@ const CreateEmployee = () => {
       }
     } catch (error) {
       console.error("Error creating employee:", error);
-      message.error("Hodim yaratishda xatolik yuz berdi.");
+      if (error.response && error.response.status === 400) {
+        message.error(error.response.data?.error);
+      }
     }
   };
 

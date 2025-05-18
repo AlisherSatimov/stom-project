@@ -1,70 +1,63 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Modal, Form, Input, message } from "antd";
-import axios from "../utils/axiosInstance"; // Custom axios instance with token and baseURL
+// Import necessary libraries and hooks
+import { Table, Button, Space, Modal, Form, Input, message, Spin } from "antd";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "../utils/axiosInstance"; // Custom axios instance
 
 const ServiceController = () => {
-  // State hooks
-  const [services, setServices] = useState([]); // All fetched services
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility
   const [isEditing, setIsEditing] = useState(false); // Edit/Add mode
-  const [selectedService, setSelectedService] = useState(null); // Service being edited
+  const [selectedService, setSelectedService] = useState(null); // Editing target
   const [form] = Form.useForm(); // Ant Design form instance
 
-  // Fetch services when component mounts
-  useEffect(() => {
-    fetchServices();
-  }, []);
+  const queryClient = useQueryClient(); // Access query cache client
 
-  // API call to fetch services
-  const fetchServices = async () => {
-    try {
-      const response = await axios.get("/service");
-      if (response.status === 200) {
-        setServices(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching services:", error);
-      message.error("Failed to fetch services.");
-    }
-  };
+  // Fetch all services using React Query
+  const {
+    data: services,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () => {
+      const res = await axios.get("/service");
+      return res.data;
+    },
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+  });
 
-  // Delete service with confirmation modal
-  const handleDelete = (id) => {
-    Modal.confirm({
-      title: "Are you sure you want to delete this service?",
-      content: "This action cannot be undone.",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      onOk: async () => {
-        try {
-          const response = await axios.delete(`/service/${id}`);
-          if (response.status === 200) {
-            message.success("Service deleted successfully!");
-            // Remove deleted item from UI
-            setServices((prev) => prev.filter((service) => service.id !== id));
-          }
-        } catch (error) {
-          console.error("Error deleting service:", error);
-          message.error("Failed to delete service.");
-        }
-      },
-    });
-  };
+  // Mutation to delete a service
+  const deleteService = useMutation({
+    mutationFn: (id) => axios.delete(`/service/${id}`),
+    onSuccess: () => {
+      message.success("Service deleted successfully!");
+      queryClient.invalidateQueries(["services"]);
+    },
+    onError: () => message.error("Failed to delete service."),
+  });
 
-  // When user clicks Edit, fill form with selected service
-  const handleEdit = (service) => {
-    setIsEditing(true);
-    setSelectedService(service);
-    form.setFieldsValue({
-      serviceName: service.serviceName,
-      price: service.price,
-      expense: service.expense,
-    });
-    setIsModalOpen(true);
-  };
+  // Mutation to create a new service
+  const createService = useMutation({
+    mutationFn: (data) => axios.post("/service", data),
+    onSuccess: () => {
+      message.success("Service created successfully!");
+      queryClient.invalidateQueries(["services"]);
+    },
+    onError: () => message.error("Failed to create service."),
+  });
 
-  // Clear form for new service creation
+  // Mutation to update a service
+  const updateService = useMutation({
+    mutationFn: ({ id, data }) => axios.put(`/service/${id}`, data),
+    onSuccess: () => {
+      message.success("Service updated successfully!");
+      queryClient.invalidateQueries(["services"]);
+    },
+    onError: () => message.error("Failed to update service."),
+  });
+
+  // Modal open for new service
   const handleAddService = () => {
     setIsEditing(false);
     setSelectedService(null);
@@ -72,55 +65,75 @@ const ServiceController = () => {
     setIsModalOpen(true);
   };
 
-  // Submit form (Add or Edit based on mode)
+  // Modal open for editing
+  const handleEdit = (service) => {
+    setIsEditing(true);
+    setSelectedService(service);
+    form.setFieldsValue(service);
+    setIsModalOpen(true);
+  };
+
+  // Modal submit handler (create or update)
   const handleModalSubmit = async (values) => {
-    // Prepare payload with explicit number conversion
+    const price = Number(values.price);
+    const expense = Number(values.expense);
+
+    if (isNaN(price) || isNaN(expense)) {
+      message.error("Price or Expense is not a valid number!");
+      return;
+    }
+
     const payload = {
       ...values,
-      price: Number(values.price),
-      expense: Number(values.expense),
+      price,
+      expense,
     };
 
     try {
       if (isEditing) {
-        // Check if selected service has ID
         if (!selectedService?.id) {
           message.error("Selected service ID not found!");
           return;
         }
 
-        const response = await axios.put(
-          `/service/${selectedService.id}`,
-          payload
-        );
-        if (response.status === 200) {
-          message.success("Service updated successfully!");
-        }
+        await updateService.mutateAsync({
+          id: selectedService.id,
+          data: payload,
+        });
       } else {
-        const response = await axios.post("/service", payload);
-        if (response.status === 200 || response.status === 201) {
-          message.success("Service created successfully!");
-        }
+        await createService.mutateAsync(payload);
       }
 
-      // Refresh list and close modal
-      fetchServices();
+      // Modalni yopish va forma yangilash
       setIsModalOpen(false);
+      form.resetFields();
     } catch (error) {
-      console.error("Error submitting service:", error);
-      message.error("Failed to submit service.");
+      console.error("Submit error:", error);
+      message.error("Service submission failed!");
     }
   };
 
-  // Called when modal OK button is clicked
+  // Delete confirmation modal
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this service?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => deleteService.mutate(id),
+    });
+  };
+
+  // Confirm modal OK
   const handleOk = () => {
     form
       .validateFields()
       .then((values) => handleModalSubmit(values))
-      .catch((error) => console.error("Validation Failed:", error));
+      .catch((err) => console.error("Validation Error:", err));
   };
 
-  // Table columns
+  // Define columns for Ant Design table
   const columns = [
     {
       title: "Service Name",
@@ -131,13 +144,13 @@ const ServiceController = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      render: (price) => `${price.toLocaleString()} UZS`,
+      render: (value) => `${value.toLocaleString()} UZS`,
     },
     {
       title: "Expense",
       dataIndex: "expense",
       key: "expense",
-      render: (expense) => `${expense.toLocaleString()} UZS`,
+      render: (value) => `${value.toLocaleString()} UZS`,
     },
     {
       title: "Action",
@@ -146,10 +159,8 @@ const ServiceController = () => {
       width: 140,
       render: (_, record) => (
         <Space size="middle">
-          <Button type="default" onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Button type="primary" danger onClick={() => handleDelete(record.id)}>
+          <Button onClick={() => handleEdit(record)}>Edit</Button>
+          <Button danger onClick={() => handleDelete(record.id)}>
             Delete
           </Button>
         </Space>
@@ -157,13 +168,18 @@ const ServiceController = () => {
     },
   ];
 
-  // Render
+  // Render loading state
+  if (isLoading) return <Spin spinning={true} />;
+
+  // Render error state
+  if (isError) return message.error("Failed to load services.");
+
   return (
     <div>
       <Button
         type="primary"
-        style={{ marginBottom: "16px", float: "right" }}
         onClick={handleAddService}
+        style={{ float: "right", marginBottom: "16px" }}
       >
         Add Service
       </Button>

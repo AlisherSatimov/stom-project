@@ -1,96 +1,87 @@
 // Importing necessary React hooks and libraries
-import { useEffect, useState, useRef } from "react";
+import { useRef, useState } from "react";
 import { Table, Tag, Space, Modal, message, Button, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
-import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useEmployee } from "../context/EmployeeContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "../utils/axiosInstance";
+
+// Fetch function to retrieve all employees
+const fetchEmployees = async () => {
+  const response = await axios.get("/employees");
+  if (response.status !== 200) throw new Error("Failed to fetch employees");
+  return response.data;
+};
 
 // Main Employees component
 const Employees = () => {
-  // State to store the list of employees
-  const [employees, setEmployees] = useState([]);
-
-  // States to manage search functionality
-  const [searchText, setSearchText] = useState(""); // Holds the search query
-  const [searchedColumn, setSearchedColumn] = useState(""); // Tracks which column is being searched
+  // Global query client instance
+  const queryClient = useQueryClient();
 
   // Context setters to share selected employee ID and data
   const { setEmployeeId, setEmployeeData } = useEmployee();
 
+  // Navigation hook
+  const navigate = useNavigate();
+
   // Ref used for focusing on the search input
   const searchInput = useRef(null);
 
-  // Hook for navigating to another route
-  const navigate = useNavigate();
+  // Search-related state
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
 
-  // Fetch employee list on component mount
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const response = await axios.get("/employees");
+  // React Query to fetch and cache employees
+  const {
+    data: employees,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["employees"],
+    queryFn: fetchEmployees,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
+  });
 
-        // Check if response is valid and contains an array
-        if (response.status === 200 && Array.isArray(response.data)) {
-          // Notify if the array is empty
-          if (response.data.length === 0) {
-            message.warning("No employees found.");
-          }
-          setEmployees(response.data); // Store employees in state
-        } else {
-          message.warning("No employees found.");
-        }
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        message.error("Failed to fetch employees.");
-      }
-    };
+  // Mutation to delete employee
+  const deleteMutation = useMutation({
+    mutationFn: async (id) => await axios.delete(`/employees/${id}`),
+    onSuccess: () => {
+      message.success("Employee deleted successfully!");
+      queryClient.invalidateQueries(["employees"]); // Refetch employees after deletion
+    },
+    onError: () => {
+      message.error("An error occurred while deleting the employee.");
+    },
+  });
 
-    fetchEmployees();
-  }, []);
-
-  // Handler to delete a selected employee
-  const handleDelete = async (id) => {
+  // Confirm delete dialog and mutation trigger
+  const handleDelete = (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this employee?",
       content: "This action cannot be undone.",
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
-      onOk: async () => {
-        try {
-          const response = await axios.delete(`/employees/${id}`);
-
-          if (response.status === 200) {
-            message.success("Employee deleted successfully!");
-            // Remove the deleted employee from the list
-            setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-          } else {
-            message.error("Failed to delete employee.");
-          }
-        } catch (error) {
-          console.error("Error deleting employee:", error);
-          message.error("An error occurred while deleting the employee.");
-        }
-      },
+      onOk: () => deleteMutation.mutate(id),
     });
   };
 
-  // Handles search execution
+  // Column search behavior
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
     setSearchedColumn(dataIndex);
   };
 
-  // Clears search input and resets the filter
   const handleReset = (clearFilters) => {
     clearFilters();
     setSearchText("");
   };
 
-  // Generates searchable props for a given column
   const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
@@ -147,19 +138,19 @@ const Employees = () => {
       ),
   });
 
-  // Table columns definition
+  // Table columns
   const columns = [
     {
       title: "First Name",
       dataIndex: "firstName",
       key: "firstName",
-      ...getColumnSearchProps("firstName"), // Enables search on this column
+      ...getColumnSearchProps("firstName"),
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       key: "lastName",
-      ...getColumnSearchProps("lastName"), // Enables search on this column
+      ...getColumnSearchProps("lastName"),
     },
     {
       title: "Phone Number",
@@ -185,8 +176,6 @@ const Employees = () => {
         let color = "green";
         if (role === "ROLE_ADMIN") color = "volcano";
         else if (role === "ROLE_MODERATOR") color = "geekblue";
-
-        // Render role with color-coded tag
         return <Tag color={color}>{role.replace("ROLE_", "")}</Tag>;
       },
     },
@@ -195,7 +184,6 @@ const Employees = () => {
       key: "operation",
       render: (_, record) => (
         <Space size="middle">
-          {/* Delete button per row */}
           <Button type="primary" danger onClick={() => handleDelete(record.id)}>
             Delete
           </Button>
@@ -207,15 +195,13 @@ const Employees = () => {
   return (
     <div>
       <Table
+        loading={isLoading}
         columns={columns}
-        dataSource={employees}
+        dataSource={employees || []}
         rowKey="id"
-        // Custom row behavior
         onRow={(record) => ({
           onClick: (e) => {
             const target = e.target;
-
-            // Ignore row click if it's on a button or link
             if (
               target.tagName === "BUTTON" ||
               target.closest("button") ||
@@ -226,8 +212,6 @@ const Employees = () => {
             ) {
               return;
             }
-
-            // Store employee data in context and navigate
             setEmployeeId(record.id);
             setEmployeeData(record);
             navigate(`/admin/employeeID/${record.id}`);
@@ -239,5 +223,4 @@ const Employees = () => {
   );
 };
 
-// Exporting the component
 export default Employees;
