@@ -29,7 +29,7 @@ const ServiceController = () => {
 
   // Mutation to delete a service
   const deleteService = useMutation({
-    mutationFn: (id) => axios.delete(`/service/${id}`),
+    mutationFn: (id) => axios.delete(`/service/passive-delete/${id}`),
     onSuccess: () => {
       message.success("Service deleted successfully!");
       queryClient.invalidateQueries(["services"]);

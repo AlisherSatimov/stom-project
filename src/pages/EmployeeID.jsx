@@ -122,11 +122,14 @@ const EmployeeID = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/employees/${employeeId}`, {
-            headers: {
-              Authorization: `Bearer ${aToken}`,
-            },
-          });
+          const response = await axios.delete(
+            `/employees/passive-delete/${employeeId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${aToken}`,
+              },
+            }
+          );
           if (response.status === 200) {
             message.success("Employee deleted successfully!");
             navigate("/admin/employees");

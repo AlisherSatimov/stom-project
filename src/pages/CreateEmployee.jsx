@@ -52,10 +52,10 @@ const CreateEmployee = () => {
       const response = await axios.post("/auth/create", employeeData);
 
       if (response.status >= 200 && response.status < 300) {
-        message.success("Hodim yaratildi");
+        message.success("Employe Created");
         navigate("/admin/employees");
       } else {
-        message.error("Nimadir xato ketdi, qaytadan urinib ko'ring!");
+        message.error("Somthong went wrong, please try again!");
       }
     } catch (error) {
       console.error("Error creating employee:", error);

@@ -48,7 +48,8 @@ const Employees = () => {
 
   // Mutation to delete employee
   const deleteMutation = useMutation({
-    mutationFn: async (id) => await axios.delete(`/employees/${id}`),
+    mutationFn: async (id) =>
+      await axios.delete(`/employees/passive-delete/${id}`),
     onSuccess: () => {
       message.success("Employee deleted successfully!");
       queryClient.invalidateQueries(["employees"]); // Refetch employees after deletion

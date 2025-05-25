@@ -80,14 +80,22 @@ const ClientDetails = () => {
   // Handle file download
   const handleDownload = async (id, fileName) => {
     try {
-      const response = await axios.get(`/analyse/download/${id}`);
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const response = await axios.get(`/analyse/download/${id}`, {
+        responseType: "blob", // ✅ Bu MUHIM!
+      });
+
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
+
+      // tozalash
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Download error:", error);
       message.error("Failed to download file.");
@@ -130,7 +138,9 @@ const ClientDetails = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/client/${clientId}`);
+          const response = await axios.delete(
+            `/client/passive-delete/${clientId}`
+          );
           if (response.status === 200) {
             message.success("Client deleted successfully!");
             navigate("/clients");

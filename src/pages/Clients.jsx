@@ -200,7 +200,9 @@ const Clients = () => {
       cancelText: "No",
       onOk: async () => {
         try {
-          const response = await axios.delete(`/client/${clientId}`);
+          const response = await axios.delete(
+            `/client/passive-delete/${clientId}`
+          );
           if (response.status === 200) {
             message.success("Client deleted successfully!");
             queryClient.invalidateQueries(["clients"]); // 🔄 cache yangilanadi
