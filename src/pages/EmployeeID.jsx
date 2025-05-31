@@ -148,16 +148,24 @@ const EmployeeID = () => {
   };
 
   const handleReportCalculation = () => {
-    const startMs = new Date(startDate).getTime();
-    const endMs = new Date(endDate).getTime();
-
-    if (!startMs || !endMs || isNaN(startMs) || isNaN(endMs)) {
-      return message.warning("Iltimos, ikki sana tanlang.");
+    if (!startDate || !endDate) {
+      return message.warning("Please, select two date");
     }
 
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    const startMs = start.getTime();
+    const endMs = end.getTime();
+
     const filtered = patients.filter((p) => {
-      const createdMs = new Date(p.createdAt).getTime();
-      return createdMs >= startMs && createdMs <= endMs;
+      const createdMs = moment(p.createdAt, "DD/MM/YYYY HH:mm").valueOf();
+      const isInRange = createdMs >= startMs && createdMs <= endMs;
+
+      return isInRange;
     });
 
     const totals = filtered.reduce(
@@ -183,8 +191,6 @@ const EmployeeID = () => {
       percent: reportStats.percent,
       dentistShare,
     });
-
-    console.log("📋 Filtered patients:", filtered);
   };
 
   const handlePercentChange = (e) => {
