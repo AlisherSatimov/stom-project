@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Badge, Space, Table, Modal, message, Form, Input } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const Patients = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
@@ -11,8 +12,14 @@ const Patients = () => {
   const [maxDebt, setMaxDebt] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPaid, setTotalPaid] = useState(0);
-
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const aToken = localStorage.getItem("aToken");
+
+  if (aToken == null) {
+    navigate("/login");
+  }
 
   const { data: patients = [], isLoading } = useQuery({
     queryKey: ["patients"],
