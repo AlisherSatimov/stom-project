@@ -17,7 +17,7 @@ const Patients = () => {
   const { data: patients = [], isLoading } = useQuery({
     queryKey: ["patients"],
     queryFn: async () => {
-      const response = await axios.get("/patient/find-all");
+      const response = await axios.get("/patient/find-debt");
       return response.data.sort((a, b) => b.id - a.id);
     },
     staleTime: 0,
