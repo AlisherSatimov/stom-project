@@ -99,14 +99,34 @@ const Patients = () => {
     });
   };
 
+  // const handleOk = () => {
+  //   form
+  //     .validateFields()
+  //     .then((values) => {
+  //       paymentMutation.mutate({
+  //         id: selectedPatient.id,
+  //         paidValue: values.paidValue,
+  //       });
+  //     })
+  //     .catch((error) => console.error("Validation Failed:", error));
+  // };
+
   const handleOk = () => {
     form
       .validateFields()
       .then((values) => {
+        const paidInput = values.paidValue;
+        const willRemain = maxDebt - paidInput;
+
         paymentMutation.mutate({
           id: selectedPatient.id,
-          paidValue: values.paidValue,
+          paidValue: paidInput,
         });
+
+        // 💡 Agar foydalanuvchi to‘liq to‘lasa, query yangilansin
+        if (willRemain === 0) {
+          queryClient.invalidateQueries(["patients"]);
+        }
       })
       .catch((error) => console.error("Validation Failed:", error));
   };
