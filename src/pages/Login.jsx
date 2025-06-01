@@ -3,8 +3,15 @@ import { Form, Input, Button, Spin, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const Login = () => {
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+  };
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -57,6 +64,24 @@ export const Login = () => {
 
   return (
     <div className="login-page">
+      <div style={{ textAlign: "right", padding: "10px 50px" }}>
+        {["en", "ru", "uz"].map((lang) => (
+          <span
+            key={lang}
+            onClick={() => changeLanguage(lang)}
+            style={{
+              cursor: "pointer",
+              marginRight: lang !== "uz" ? 12 : 0,
+              fontWeight: i18n.language === lang ? "bold" : "normal",
+              textDecoration: i18n.language === lang ? "underline" : "none",
+              color: i18n.language === lang ? "#1890ff" : "#555",
+            }}
+          >
+            {lang.toUpperCase()}
+          </span>
+        ))}
+      </div>
+
       <div className="login-form">
         <Form
           style={{

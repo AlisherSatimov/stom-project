@@ -9,6 +9,8 @@ import {
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -29,6 +31,7 @@ const items = [
 ];
 
 const ManagerLayout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -100,6 +103,7 @@ const ManagerLayout = () => {
               Manager
             </span>
             <span className="flex">
+              <LanguageSwitcher />
               <BellTwoTone
                 className="text-2xl"
                 style={{

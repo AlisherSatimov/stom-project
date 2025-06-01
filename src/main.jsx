@@ -3,6 +3,8 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 
+import "./i18n";
+
 import { SiderProvider } from "./context/SiderContext";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

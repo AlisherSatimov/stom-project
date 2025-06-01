@@ -2,7 +2,6 @@ import {
   TeamOutlined,
   DashboardOutlined,
   UserAddOutlined,
-  BellTwoTone,
   LogoutOutlined,
   ReconciliationOutlined,
 } from "@ant-design/icons";
@@ -10,6 +9,8 @@ import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 import { useSider } from "../context/SiderContext";
+import LanguageSwitcher from "../components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -34,9 +35,9 @@ const items = [
 ];
 
 const AdminLayout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { collapsed, toggleSider } = useSider();
 
   const handleLogOut = () => {
     localStorage.removeItem("aToken");
@@ -100,12 +101,8 @@ const AdminLayout = () => {
             Adminstrator
           </span>
           <span className="flex">
-            <BellTwoTone
-              className="text-2xl"
-              style={{
-                width: 50,
-              }}
-            />
+            <LanguageSwitcher />
+
             <LogoutOutlined className="text-2xl" onClick={handleLogOut} />
           </span>
         </Header>
