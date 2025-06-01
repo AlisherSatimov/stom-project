@@ -33,7 +33,7 @@ const ManagerLayout = () => {
   const location = useLocation();
 
   const handleLogOut = () => {
-    localStorage.clear();
+    localStorage.removeItem("aToken");
     navigate("/login");
   };
 

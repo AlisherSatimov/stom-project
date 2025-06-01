@@ -39,7 +39,7 @@ const AdminLayout = () => {
   const { collapsed, toggleSider } = useSider();
 
   const handleLogOut = () => {
-    localStorage.clear();
+    localStorage.removeItem("aToken");
     navigate("/login");
   };
 
