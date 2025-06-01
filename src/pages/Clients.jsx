@@ -458,7 +458,7 @@ const Clients = () => {
           resetModalState(); // ✅ Clear modal on cancel too
         }}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
       >
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
