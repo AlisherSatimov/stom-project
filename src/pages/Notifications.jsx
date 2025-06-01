@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Card, Button, Spin, message, Row, Col, Modal } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const Notifications = () => {
   const queryClient = useQueryClient();
@@ -16,7 +20,23 @@ const Notifications = () => {
     queryKey: ["notifications"],
     queryFn: async () => {
       const response = await axios.get("/notification/find-all");
-      return response.data;
+      const all = response.data;
+
+      const today = dayjs().startOf("day");
+      const threeDaysLater = today.add(3, "day").endOf("day");
+
+      return all
+        .filter((n) => {
+          const visitDate = dayjs(n.nextVisit, "DD/MM/YYYY");
+          return (
+            visitDate.isValid() && visitDate.isSameOrBefore(threeDaysLater)
+          );
+        })
+        .sort((a, b) => {
+          const aDate = dayjs(a.nextVisit, "DD/MM/YYYY");
+          const bDate = dayjs(b.nextVisit, "DD/MM/YYYY");
+          return aDate - bDate;
+        });
     },
     staleTime: 0,
   });

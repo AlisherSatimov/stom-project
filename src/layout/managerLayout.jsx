@@ -11,6 +11,8 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { useUpcomingNotifications } from "../queries/useUpcomingNotifications";
+import { Badge } from "antd";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -34,6 +36,7 @@ const ManagerLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: notificationCount = 0 } = useUpcomingNotifications();
 
   const handleLogOut = () => {
     localStorage.removeItem("aToken");
@@ -104,12 +107,17 @@ const ManagerLayout = () => {
             </span>
             <span className="flex">
               <LanguageSwitcher />
-              <BellTwoTone
-                className="text-2xl"
-                style={{
-                  width: 50,
-                }}
-              />
+              <Badge count={notificationCount} size="small" offset={[-30, 6]}>
+                <BellTwoTone
+                  className="text-2xl"
+                  style={{
+                    width: 50,
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate("/notifications")}
+                />
+              </Badge>
+
               <LogoutOutlined
                 className="text-2xl"
                 onClick={handleLogOut}
