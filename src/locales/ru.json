@@ -33,6 +33,30 @@
   "failedToLoad": "Не удалось загрузить уведомления.",
   "noNotifications": "Нет доступных уведомлений.",
   "doneButton": "Готово",
-  "phoneNumber": "Номер телефона:",
-  "nextVisit": "Следующий визит:"
+  "nextVisit": "Следующий визит:",
+
+  "createNewClient": "Создать нового клиента",
+  "firstName": "Имя",
+  "lastName": "Фамилия",
+  "patronymic": "Отчество",
+  "gender": "Пол",
+  "male": "Мужской",
+  "female": "Женский",
+  "birthday": "Дата рождения",
+  "phoneNumber": "Номер телефона",
+  "address": "Адрес",
+  "submit": "Отправить",
+  "reset": "Сбросить",
+
+  "pleaseEnterFirstName": "Пожалуйста, введите имя!",
+  "pleaseEnterLastName": "Пожалуйста, введите фамилию!",
+  "pleaseEnterPatronymic": "Пожалуйста, введите отчество!",
+  "pleaseSelectGender": "Пожалуйста, выберите пол!",
+  "pleaseSelectBirthday": "Пожалуйста, выберите дату рождения!",
+  "pleaseEnterPhone": "Введите номер телефона!",
+  "invalidPhone": "Пожалуйста, введите корректный номер телефона!",
+  "pleaseEnterAddress": "Пожалуйста, введите адрес!",
+
+  "somethingWentWrong": "Произошла ошибка. Пожалуйста, попробуйте снова!",
+  "createClientError": "Не удалось создать клиента. Проверьте соединение и попробуйте снова."
 }

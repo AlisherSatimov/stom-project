@@ -10,10 +10,12 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
 const CreateClient = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Handles form submission and sends data to the server
@@ -35,13 +37,11 @@ const CreateClient = () => {
         message.success(response.data.message); // Notify success
         navigate("/clients"); // Redirect to clients list
       } else {
-        message.error("Something went wrong. Please try again!");
+        message.error(t("somethingWentWrong"));
       }
     } catch (error) {
       console.error("Error creating client:", error);
-      message.error(
-        "Failed to create client. Please check your connection and try again."
-      );
+      message.error(t("createClientError"));
     }
   };
 
@@ -49,7 +49,7 @@ const CreateClient = () => {
     <div style={{ padding: "40px", maxWidth: "800px", margin: "auto" }}>
       {/* Page title */}
       <Title level={2} style={{ textAlign: "center", marginBottom: "30px" }}>
-        Create New Client
+        {t("createNewClient")}
       </Title>
 
       {/* Client creation form */}
@@ -67,11 +67,11 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              First Name
+              {t("firstName")}
             </span>
           }
           name="name"
-          rules={[{ required: true, message: "Please enter first name!" }]}
+          rules={[{ required: true, message: t("pleaseEnterFirstName") }]}
         >
           <Input size="large" />
         </Form.Item>
@@ -80,11 +80,11 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Last Name
+              {t("lastName")}
             </span>
           }
           name="lastName"
-          rules={[{ required: true, message: "Please enter last name!" }]}
+          rules={[{ required: true, message: t("pleaseEnterLastName") }]}
         >
           <Input size="large" />
         </Form.Item>
@@ -93,11 +93,11 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Patronymic
+              {t("patronymic")}
             </span>
           }
           name="patronymic"
-          rules={[{ required: true, message: "Please enter patronymic!" }]}
+          rules={[{ required: true, message: t("pleaseEnterPatronymic") }]}
         >
           <Input size="large" />
         </Form.Item>
@@ -105,17 +105,19 @@ const CreateClient = () => {
         {/* Gender radio buttons */}
         <Form.Item
           label={
-            <span style={{ fontSize: "16px", fontWeight: "bold" }}>Gender</span>
+            <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+              {t("gender")}
+            </span>
           }
           name="gender"
-          rules={[{ required: true, message: "Please select gender!" }]}
+          rules={[{ required: true, message: t("pleaseSelectGender") }]}
         >
           <Radio.Group>
             <Radio value="MALE" style={{ fontSize: "16px" }}>
-              Male
+              {t("male")}
             </Radio>
             <Radio value="FEMALE" style={{ fontSize: "16px" }}>
-              Female
+              {t("female")}
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -124,11 +126,11 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Birthday
+              {t("birthday")}
             </span>
           }
           name="birthday"
-          rules={[{ required: true, message: "Please select birthday!" }]}
+          rules={[{ required: true, message: t("pleaseSelectBirthday") }]}
         >
           <DatePicker size="large" style={{ width: "100%" }} />
         </Form.Item>
@@ -137,19 +139,19 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Phone Number
+              {t("phoneNumber")}
             </span>
           }
           name="phoneNumber"
           rules={[
             {
               required: true,
-              message: "Enter your phone number!",
+              message: t("pleaseEnterPhone"),
             },
             {
               pattern:
                 /^[+]*[0-9]{1,3}[ ]?[-\s]?[0-9]{1,4}[ ]?[-\s]?[0-9]{1,4}[ ]?[-\s]?[0-9]{1,9}$/,
-              message: "Please enter a valid phone number!",
+              message: t("invalidPhone"),
             },
           ]}
         >
@@ -160,11 +162,11 @@ const CreateClient = () => {
         <Form.Item
           label={
             <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Address
+              {t("address")}
             </span>
           }
           name="address"
-          rules={[{ required: true, message: "Please enter address!" }]}
+          rules={[{ required: true, message: t("pleaseEnterAddress") }]}
         >
           <Input size="large" />
         </Form.Item>
@@ -173,10 +175,10 @@ const CreateClient = () => {
         <Form.Item>
           <Space style={{ width: "100%", justifyContent: "center" }}>
             <Button type="primary" htmlType="submit" size="large">
-              Submit
+              {t("submit")}
             </Button>
             <Button htmlType="reset" size="large">
-              Reset
+              {t("reset")}
             </Button>
           </Space>
         </Form.Item>

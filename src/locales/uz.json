@@ -33,6 +33,30 @@
   "failedToLoad": "Bildirishnomalarni yuklab bo‘lmadi.",
   "noNotifications": "Hech qanday bildirishnoma mavjud emas.",
   "doneButton": "Bajarildi",
-  "phoneNumber": "Telefon raqami:",
-  "nextVisit": "Keyingi tashrif:"
+  "nextVisit": "Keyingi tashrif:",
+
+  "createNewClient": "Yangi mijoz qo‘shish",
+  "firstName": "Ism",
+  "lastName": "Familiya",
+  "patronymic": "Otasining ismi",
+  "gender": "Jinsi",
+  "male": "Erkak",
+  "female": "Ayol",
+  "birthday": "Tug‘ilgan sana",
+  "phoneNumber": "Telefon raqami",
+  "address": "Manzil",
+  "submit": "Yuborish",
+  "reset": "Tozalash",
+
+  "pleaseEnterFirstName": "Iltimos, ismni kiriting!",
+  "pleaseEnterLastName": "Iltimos, familiyani kiriting!",
+  "pleaseEnterPatronymic": "Iltimos, otasining ismini kiriting!",
+  "pleaseSelectGender": "Iltimos, jinsni tanlang!",
+  "pleaseSelectBirthday": "Iltimos, tug‘ilgan sanani tanlang!",
+  "pleaseEnterPhone": "Telefon raqamingizni kiriting!",
+  "invalidPhone": "Iltimos, to‘g‘ri telefon raqam kiriting!",
+  "pleaseEnterAddress": "Iltimos, manzilni kiriting!",
+
+  "somethingWentWrong": "Xatolik yuz berdi. Qaytadan urinib ko‘ring!",
+  "createClientError": "Mijozni yaratib bo‘lmadi. Iltimos, ulanishni tekshirib qayta urinib ko‘ring."
 }

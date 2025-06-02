@@ -33,6 +33,30 @@
   "failedToLoad": "Failed to load notifications.",
   "noNotifications": "No notifications available.",
   "doneButton": "Done",
-  "phoneNumber": "Phone Number:",
-  "nextVisit": "Next Visit:"
+  "nextVisit": "Next Visit:",
+
+  "createNewClient": "Create New Client",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "patronymic": "Patronymic",
+  "gender": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "birthday": "Birthday",
+  "phoneNumber": "Phone Number",
+  "address": "Address",
+  "submit": "Submit",
+  "reset": "Reset",
+
+  "pleaseEnterFirstName": "Please enter first name!",
+  "pleaseEnterLastName": "Please enter last name!",
+  "pleaseEnterPatronymic": "Please enter patronymic!",
+  "pleaseSelectGender": "Please select gender!",
+  "pleaseSelectBirthday": "Please select birthday!",
+  "pleaseEnterPhone": "Enter your phone number!",
+  "invalidPhone": "Please enter a valid phone number!",
+  "pleaseEnterAddress": "Please enter address!",
+
+  "somethingWentWrong": "Something went wrong. Please try again!",
+  "createClientError": "Failed to create client. Please check your connection and try again."
 }
