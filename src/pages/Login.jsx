@@ -15,13 +15,13 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const authErrorMessage = localStorage.getItem("authErrorMessage");
-    if (authErrorMessage) {
-      message.warning(authErrorMessage);
-      localStorage.removeItem("authErrorMessage"); // faqat bir marta ko‘rsatish uchun
-    }
-  }, []);
+  // useEffect(() => {
+  //   const authErrorMessage = localStorage.getItem("authErrorMessage");
+  //   if (authErrorMessage) {
+  //     message.warning(authErrorMessage);
+  //     localStorage.removeItem("authErrorMessage");
+  //   }
+  // }, []);
 
   const handleLogin = async (values) => {
     setLoading(true);
@@ -38,25 +38,31 @@ export const Login = () => {
       let lName = response.data.lastName + "";
       let aToken = response.data.token;
       localStorage.setItem("aToken", aToken);
-      if (response.data.role == "ROLE_MODERATOR") {
+      if (response.data.role === "ROLE_MODERATOR") {
         navigate("/");
         sessionStorage.setItem("currentPage", "/");
         message.success(
-          `Welcome Manager ${fName.toUpperCase()} ${lName.toUpperCase()}`
+          t("welcomeManager", {
+            fName: fName.toUpperCase(),
+            lName: lName.toUpperCase(),
+          })
         );
-      } else if (response.data.role == "ROLE_ADMIN") {
+      } else if (response.data.role === "ROLE_ADMIN") {
         navigate("/admin");
         sessionStorage.setItem("currentPage", "/admin");
         message.success(
-          `Welcome Admin ${fName.toUpperCase()} ${lName.toUpperCase()}`
+          t("welcomeAdmin", {
+            fName: fName.toUpperCase(),
+            lName: lName.toUpperCase(),
+          })
         );
       } else {
-        message.error(
-          `You are not a Manager or Admin. Please enter a valid Login and Password.`
-        );
+        message.error(t("notAuthorized"));
+        localStorage.removeItem("aToken");
       }
     } catch (error) {
       console.error("Login failed", error.response.data.error);
+      message.error(t("invalidLogin"));
     } finally {
       setLoading(false);
     }
@@ -100,12 +106,12 @@ export const Login = () => {
           autoComplete="off"
         >
           <Form.Item
-            label="Login"
+            label={t("login")}
             name="login"
             rules={[
               {
                 required: true,
-                message: "Please input your login!",
+                message: t("enter_login"),
               },
             ]}
           >
@@ -113,12 +119,12 @@ export const Login = () => {
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t("password")}
             name="password"
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
+                message: t("enter_password"),
               },
             ]}
           >

@@ -2,5 +2,11 @@
   "login": "Foydalanuvchi nomi",
   "password": "Parol",
   "enter_login": "Iltimos, loginni kiriting!",
-  "enter_password": "Iltimos, parolni kiriting!"
+  "enter_password": "Iltimos, parolni kiriting!",
+
+  "welcomeManager": "Xush kelibsiz, Menejer {{fName}} {{lName}}",
+  "welcomeAdmin": "Xush kelibsiz, Admin {{fName}} {{lName}}",
+  "notAuthorized": "Siz Menejer yoki Admin emassiz. Iltimos, to‘g‘ri login va parol kiriting.",
+
+  "invalidLogin": "Login yoki parol noto'g'ri"
 }

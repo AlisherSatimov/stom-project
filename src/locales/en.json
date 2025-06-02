@@ -2,5 +2,11 @@
   "login": "Login",
   "password": "Password",
   "enter_login": "Please input your login!",
-  "enter_password": "Please input your password!"
+  "enter_password": "Please input your password!",
+
+  "welcomeManager": "Welcome Manager {{fName}} {{lName}}",
+  "welcomeAdmin": "Welcome Admin {{fName}} {{lName}}",
+  "notAuthorized": "You are not a Manager or Admin. Please enter a valid Login and Password.",
+
+  "invalidLogin": "Invalid login or password"
 }
