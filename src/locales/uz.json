@@ -8,5 +8,18 @@
   "welcomeAdmin": "Xush kelibsiz, Admin {{fName}} {{lName}}",
   "notAuthorized": "Siz Menejer yoki Admin emassiz. Iltimos, to‘g‘ri login va parol kiriting.",
 
-  "invalidLogin": "Login yoki parol noto'g'ri"
+  "invalidLogin": "Login yoki parol noto'g'ri",
+
+  "patients": "Bemorlar",
+  "clients": "Mijozlar",
+  "createClient": "Yangi mijoz",
+  "notifications": "Bildirishnomalar",
+
+  "manager": "Menejer",
+  "administrator": "Administrator",
+
+  "dashboard": "Boshqaruv paneli",
+  "employees": "Hodimlar",
+  "createEmployee": "Yangi hodim",
+  "serviceController": "Xizmatlar boshqaruvi"
 }

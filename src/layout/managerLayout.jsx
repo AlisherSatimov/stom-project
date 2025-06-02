@@ -25,18 +25,18 @@ function getItem(label, key, icon, children) {
   };
 }
 
-const items = [
-  getItem("Patients", "/", <DashboardOutlined />),
-  getItem("Clients", "/clients", <TeamOutlined />),
-  getItem("Create Client", "/createClient", <UserAddOutlined />),
-  getItem("Notifications", "/notifications", <BellOutlined />),
-];
-
 const ManagerLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { data: notificationCount = 0 } = useUpcomingNotifications();
+
+  const items = [
+    getItem(t("patients"), "/", <DashboardOutlined />),
+    getItem(t("clients"), "/clients", <TeamOutlined />),
+    getItem(t("createClient"), "/createClient", <UserAddOutlined />),
+    getItem(t("notifications"), "/notifications", <BellOutlined />),
+  ];
 
   const handleLogOut = () => {
     localStorage.removeItem("aToken");
@@ -57,7 +57,7 @@ const ManagerLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <Sider>
+      <Sider width={250}>
         <div
           className="text-lg"
           style={{
@@ -103,7 +103,7 @@ const ManagerLayout = () => {
                 letterSpacing: "2px",
               }}
             >
-              Manager
+              {t("manager")}
             </span>
             <span className="flex">
               <LanguageSwitcher />

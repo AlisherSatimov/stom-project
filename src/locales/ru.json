@@ -8,5 +8,18 @@
   "welcomeAdmin": "Добро пожаловать, Админ {{fName}} {{lName}}",
   "notAuthorized": "Вы не являетесь Менеджером или Админом. Пожалуйста, введите правильный логин и пароль.",
 
-  "invalidLogin": "Неверный логин или пароль"
+  "invalidLogin": "Неверный логин или пароль",
+
+  "patients": "Пациенты",
+  "clients": "Клиенты",
+  "createClient": "Новый клиент",
+  "notifications": "Уведомления",
+
+  "manager": "Менеджер",
+  "administrator": "Администратор",
+
+  "dashboard": "Панель управления",
+  "employees": "Сотрудники",
+  "createEmployee": "Добавить сотрудника",
+  "serviceController": "Управление услугами"
 }

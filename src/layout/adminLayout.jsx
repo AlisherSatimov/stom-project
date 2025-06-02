@@ -8,7 +8,6 @@ import {
 import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
-import { useSider } from "../context/SiderContext";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
@@ -23,21 +22,21 @@ function getItem(label, key, icon, children) {
   };
 }
 
-const items = [
-  getItem("Dashboard", "/admin", <DashboardOutlined />),
-  getItem("Employees", "/admin/employees", <TeamOutlined />),
-  getItem("Create Employee", "/admin/createEmployee", <UserAddOutlined />),
-  getItem(
-    "Service Controller",
-    "/admin/serviceController",
-    <ReconciliationOutlined />
-  ),
-];
-
 const AdminLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const items = [
+    getItem(t("dashboard"), "/admin", <DashboardOutlined />),
+    getItem(t("employees"), "/admin/employees", <TeamOutlined />),
+    getItem(t("createEmployee"), "/admin/createEmployee", <UserAddOutlined />),
+    getItem(
+      t("serviceController"),
+      "/admin/serviceController",
+      <ReconciliationOutlined />
+    ),
+  ];
 
   const handleLogOut = () => {
     localStorage.removeItem("aToken");
@@ -58,7 +57,7 @@ const AdminLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <Sider>
+      <Sider width={250}>
         <div
           className="text-lg"
           style={{
@@ -98,7 +97,7 @@ const AdminLayout = () => {
               letterSpacing: "2px",
             }}
           >
-            Adminstrator
+            {t("administrator")}
           </span>
           <span className="flex">
             <LanguageSwitcher />

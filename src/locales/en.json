@@ -8,5 +8,18 @@
   "welcomeAdmin": "Welcome Admin {{fName}} {{lName}}",
   "notAuthorized": "You are not a Manager or Admin. Please enter a valid Login and Password.",
 
-  "invalidLogin": "Invalid login or password"
+  "invalidLogin": "Invalid login or password",
+
+  "patients": "Patients",
+  "clients": "Clients",
+  "createClient": "Create Client",
+  "notifications": "Notifications",
+
+  "manager": "Manager",
+  "administrator": "Administrator",
+
+  "dashboard": "Dashboard",
+  "employees": "Employees",
+  "createEmployee": "Create Employee",
+  "serviceController": "Service Controller"
 }
