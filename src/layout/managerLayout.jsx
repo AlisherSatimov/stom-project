@@ -48,7 +48,7 @@ const ManagerLayout = () => {
   } = theme.useToken();
 
   const handleMenuClick = (key) => {
-    navigate(key); // `key` to'g'ridan-to'g'ri URL bo'ladi
+    navigate(key);
   };
 
   return (

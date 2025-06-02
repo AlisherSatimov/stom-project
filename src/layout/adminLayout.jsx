@@ -5,7 +5,7 @@ import {
   LogoutOutlined,
   ReconciliationOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Button, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 import LanguageSwitcher from "../components/LanguageSwitcher";
@@ -48,7 +48,7 @@ const AdminLayout = () => {
   } = theme.useToken();
 
   const handleMenuClick = (key) => {
-    navigate(key); // `key` to'g'ridan-to'g'ri URL bo'ladi
+    navigate(key);
   };
 
   return (
@@ -71,7 +71,7 @@ const AdminLayout = () => {
         </div>
         <Menu
           theme="dark"
-          selectedKeys={[location.pathname]} // Sahifadagi tanlangan elementni ko'rsatadi
+          selectedKeys={[location.pathname]}
           mode="inline"
           items={items}
           onClick={({ key }) => handleMenuClick(key)}
