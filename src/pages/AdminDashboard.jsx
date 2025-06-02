@@ -67,15 +67,20 @@ const fetchDashboardData = async () => {
       patients: patientsRes.data,
       employees: employeesRes.data,
     },
-    monthlyPatients: monthlyRes.data.map((item) => ({
-      month: MONTH_NAMES[item.month - 1],
-      count: item.count,
-    })),
-    incomeExpense: incomeExpenseRes.data.map((item) => ({
-      month: MONTH_NAMES[item.month - 1],
-      income: item.totalIncome,
-      expense: item.totalExpense,
-    })),
+    monthlyPatients: monthlyRes.data
+      .sort((a, b) => a.month - b.month) // 🔁 oylar bo‘yicha tartiblab olamiz
+      .map((item) => ({
+        month: MONTH_NAMES[item.month - 1],
+        count: item.count,
+      })),
+
+    incomeExpense: incomeExpenseRes.data
+      .sort((a, b) => a.month - b.month) // 🔁 oylar bo‘yicha tartiblab olamiz
+      .map((item) => ({
+        month: MONTH_NAMES[item.month - 1],
+        income: item.totalIncome,
+        expense: item.totalExpense,
+      })),
   };
 };
 
