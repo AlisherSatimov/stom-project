@@ -21,5 +21,18 @@
   "dashboard": "Boshqaruv paneli",
   "employees": "Hodimlar",
   "createEmployee": "Yangi hodim",
-  "serviceController": "Xizmatlar boshqaruvi"
+  "serviceController": "Xizmatlar boshqaruvi",
+
+  "notificationDeletedSuccess": "Bildirishnoma muvaffaqiyatli o‘chirildi!",
+  "notificationDeletedFail": "Bildirishnomani o‘chirish muvaffaqiyatsiz tugadi.",
+  "notificationDeletedError": "Bildirishnomani o‘chirishda xatolik yuz berdi.",
+  "confirmDeleteTitle": "Ishonchingiz komilmi?",
+  "confirmDeleteContent": "Ushbu bildirishnomani o‘chirmoqchimisiz?",
+  "confirmDeleteOk": "Ha",
+  "confirmDeleteCancel": "Yo‘q",
+  "failedToLoad": "Bildirishnomalarni yuklab bo‘lmadi.",
+  "noNotifications": "Hech qanday bildirishnoma mavjud emas.",
+  "doneButton": "Bajarildi",
+  "phoneNumber": "Telefon raqami:",
+  "nextVisit": "Keyingi tashrif:"
 }

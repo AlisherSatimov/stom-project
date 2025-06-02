@@ -21,5 +21,18 @@
   "dashboard": "Панель управления",
   "employees": "Сотрудники",
   "createEmployee": "Добавить сотрудника",
-  "serviceController": "Управление услугами"
+  "serviceController": "Управление услугами",
+
+  "notificationDeletedSuccess": "Уведомление успешно удалено!",
+  "notificationDeletedFail": "Не удалось удалить уведомление.",
+  "notificationDeletedError": "Ошибка при удалении уведомления.",
+  "confirmDeleteTitle": "Вы уверены?",
+  "confirmDeleteContent": "Вы хотите удалить это уведомление?",
+  "confirmDeleteOk": "Да",
+  "confirmDeleteCancel": "Нет",
+  "failedToLoad": "Не удалось загрузить уведомления.",
+  "noNotifications": "Нет доступных уведомлений.",
+  "doneButton": "Готово",
+  "phoneNumber": "Номер телефона:",
+  "nextVisit": "Следующий визит:"
 }

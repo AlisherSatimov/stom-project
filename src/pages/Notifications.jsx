@@ -4,10 +4,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useTranslation } from "react-i18next";
 
 dayjs.extend(customParseFormat);
 
 const Notifications = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState(null); // 🔄 Local loading holat
 
@@ -47,13 +49,13 @@ const Notifications = () => {
     try {
       const response = await axios.delete(`/notification/delete/${id}`);
       if (response.status === 200) {
-        message.success("Notification deleted successfully!");
+        message.success(t("notificationDeletedSuccess"));
         queryClient.invalidateQueries(["notifications"]);
       } else {
-        message.error("Failed to delete notification.");
+        message.error(t("notificationDeletedFail"));
       }
     } catch (error) {
-      message.error("Error deleting notification.");
+      message.error(t("notificationDeletedError"));
     } finally {
       setDeletingId(null); // loadingni tiklash
     }
@@ -62,11 +64,11 @@ const Notifications = () => {
   // === CONFIRM MODAL BEFORE DELETE ===
   const confirmDelete = (id) => {
     Modal.confirm({
-      title: "Are you sure?",
-      content: "Do you want to delete this notification?",
-      okText: "Yes",
+      title: t("confirmDeleteTitle"),
+      content: t("confirmDeleteContent"),
+      okText: t("confirmDeleteOk"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("confirmDeleteCancel"),
       onOk: () => handleDelete(id),
     });
   };
@@ -84,7 +86,7 @@ const Notifications = () => {
     return (
       <div style={{ textAlign: "center", marginTop: "50px" }}>
         <p style={{ fontSize: "18px", fontWeight: "bold", color: "red" }}>
-          Failed to load notifications.
+          {t("failedToLoad")}
         </p>
       </div>
     );
@@ -96,7 +98,7 @@ const Notifications = () => {
       {notifications.length === 0 ? (
         <div style={{ textAlign: "center", marginTop: "50px" }}>
           <p style={{ fontSize: "18px", fontWeight: "bold" }}>
-            No notifications available.
+            {t("noNotifications")}
           </p>
         </div>
       ) : (
@@ -115,9 +117,9 @@ const Notifications = () => {
                     danger
                     size="small"
                     onClick={() => confirmDelete(notification.id)}
-                    loading={deletingId === notification.id} // ✅ faqat shu tugma loading bo‘ladi
+                    loading={deletingId === notification.id}
                   >
-                    Done
+                    {t("doneButton")}
                   </Button>
                 }
                 style={{
@@ -127,10 +129,10 @@ const Notifications = () => {
                 }}
               >
                 <p style={{ marginBottom: 8 }}>
-                  <strong>Phone Number:</strong> {notification.phoneNumber}
+                  <strong>{t("phoneNumber")}</strong> {notification.phoneNumber}
                 </p>
                 <p style={{ marginBottom: 8 }}>
-                  <strong>Next Visit:</strong> {notification.nextVisit}
+                  <strong>{t("nextVisit")}</strong> {notification.nextVisit}
                 </p>
               </Card>
             </Col>

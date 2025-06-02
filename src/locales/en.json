@@ -21,5 +21,18 @@
   "dashboard": "Dashboard",
   "employees": "Employees",
   "createEmployee": "Create Employee",
-  "serviceController": "Service Controller"
+  "serviceController": "Service Controller",
+
+  "notificationDeletedSuccess": "Notification deleted successfully!",
+  "notificationDeletedFail": "Failed to delete notification.",
+  "notificationDeletedError": "Error deleting notification.",
+  "confirmDeleteTitle": "Are you sure?",
+  "confirmDeleteContent": "Do you want to delete this notification?",
+  "confirmDeleteOk": "Yes",
+  "confirmDeleteCancel": "No",
+  "failedToLoad": "Failed to load notifications.",
+  "noNotifications": "No notifications available.",
+  "doneButton": "Done",
+  "phoneNumber": "Phone Number:",
+  "nextVisit": "Next Visit:"
 }
