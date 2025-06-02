@@ -23,18 +23,20 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log(error);
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const requestUrl = error.config?.url;
+
+    if (status === 401) {
       localStorage.removeItem("aToken");
-      localStorage.setItem(
-        "authErrorMessage",
-        "Session expired. Please log in again."
-      );
-      window.location.href = "/login";
+
+      // 🔎 Login API dan yuborilgan bo'lmasa
+      if (requestUrl !== "/auth/login") {
+        window.location.href = "/login";
+      }
     }
+
     return Promise.reject(error);
   }
 );
 
-// 4. Instance’ni eksport qilish
 export default axiosInstance;
