@@ -66,9 +66,9 @@ const Notifications = () => {
     Modal.confirm({
       title: t("confirmDeleteTitle"),
       content: t("confirmDeleteContent"),
-      okText: t("confirmDeleteOk"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: t("confirmDeleteCancel"),
+      cancelText: t("no"),
       onOk: () => handleDelete(id),
     });
   };
