@@ -454,7 +454,7 @@ const Clients = () => {
       />
 
       <Modal
-        title="Add Queue"
+        title={t("addQueue")}
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -540,7 +540,7 @@ const Clients = () => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" disabled={!canSubmit}>
-              Submit
+              {t("submit")}
             </Button>
           </Form.Item>
         </Form>
