@@ -89,5 +89,28 @@
   "genderOptions": {
     "MALE": "Erkak",
     "FEMALE": "Ayol"
-  }
+  },
+
+  "updateClient": "Mijozni yangilash",
+  "deleteClient": "Mijozni o‘chirish",
+  "clientNotFound": "Mijoz ma'lumotlari topilmadi!",
+  "uploadAnalysis": "Analiz faylini yuklash",
+  "selectFile": "Fayl tanlash",
+  "upload": "Yuklash",
+  "uploadedAnalyses": "📂 Yuklangan analizlar",
+  "noAnalyses": "Hech qanday analiz topilmadi.",
+  "updateClientInfo": "Mijoz ma'lumotlarini yangilash",
+
+  "clientUpdatedSuccess": "Mijoz muvaffaqiyatli yangilandi!",
+  "clientUpdateFail": "Mijozni yangilashda xatolik.",
+
+  "confirmClientDeleteTitle": "Ushbu mijozni o‘chirishga ishonchingiz komilmi?",
+
+  "fileSelectWarning": "Iltimos, avval fayl tanlang.",
+  "fileUploadSuccess": "Fayl muvaffaqiyatli yuklandi.",
+  "fileUploadFail": "Faylni yuklab bo‘lmadi.",
+  "fileDownloadFail": "Faylni yuklab olishda xatolik.",
+  "fileDeleteSuccess": "Fayl muvaffaqiyatli o‘chirildi.",
+  "fileDeleteFail": "Faylni o‘chirishda xatolik.",
+  "confirmDeleteFile": "\"{{fileName}}\" faylini o‘chirishga ishonchingiz komilmi?"
 }

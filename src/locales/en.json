@@ -89,5 +89,29 @@
   "genderOptions": {
     "MALE": "Male",
     "FEMALE": "Female"
-  }
+  },
+
+  "updateClient": "Update Client",
+  "deleteClient": "Delete Client",
+  "clientNotFound": "Client data could not be found!",
+  "uploadAnalysis": "Upload Analiz File",
+  "selectFile": "Select File",
+  "upload": "Upload",
+  "uploadedAnalyses": "📂 Uploaded Analyses",
+  "noAnalyses": "No analyses found.",
+  "updateClientInfo": "Update Client Information",
+
+  "clientUpdatedSuccess": "Client updated successfully!",
+  "clientUpdateFail": "Failed to update client.",
+
+  "confirmClientDeleteTitle": "Are you sure you want to delete this client?",
+
+  "fileSelectWarning": "Please select a file first.",
+  "fileUploadSuccess": "File uploaded successfully.",
+  "fileUploadFail": "Failed to upload file.",
+  "fileDownloadFail": "Failed to download file.",
+  "fileDeleteSuccess": "File deleted successfully.",
+  "fileDeleteFail": "Failed to delete file.",
+  "confirmDeleteFile": "Are you sure you want to delete \"{{fileName}}\"?",
+  "notAvailable": "N/A"
 }

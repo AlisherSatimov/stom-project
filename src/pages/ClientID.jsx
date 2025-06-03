@@ -25,6 +25,7 @@ import {
 } from "@ant-design/icons";
 import axios from "../utils/axiosInstance";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -32,6 +33,7 @@ const { Option } = Select;
 const { confirm } = Modal;
 
 const ClientDetails = () => {
+  const { t } = useTranslation();
   // Extract clientId from route params
   const { clientId } = useParams();
   const navigate = useNavigate();
@@ -98,7 +100,7 @@ const ClientDetails = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Download error:", error);
-      message.error("Failed to download file.");
+      message.error(t("fileDownloadFail"));
     }
   };
 
@@ -115,7 +117,7 @@ const ClientDetails = () => {
       const response = await axios.put(`/client/${clientId}`, updatedValues);
 
       if (response.status === 200) {
-        message.success("Client updated successfully!");
+        message.success(t("clientUpdatedSuccess"));
         setIsModalOpen(false);
 
         // ✅ YANGILANGAN MA’LUMOTLARNI QAYTADAN OLISH
@@ -123,31 +125,31 @@ const ClientDetails = () => {
       }
     } catch (error) {
       console.error("Error updating client:", error);
-      message.error("Failed to update client.");
+      message.error(t("clientUpdateFail"));
     }
   };
 
   // Handle client deletion with confirmation
   const handleDeleteClient = () => {
     confirm({
-      title: "Are you sure you want to delete this client?",
+      title: t("confirmClientDeleteTitle"),
       icon: <ExclamationCircleOutlined />,
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: async () => {
         try {
           const response = await axios.delete(
             `/client/passive-delete/${clientId}`
           );
           if (response.status === 200) {
-            message.success("Client deleted successfully!");
+            message.success(t("clientDeletedSuccess"));
             navigate("/clients");
           }
         } catch (error) {
           console.error("Delete error:", error);
-          message.error("Failed to delete client.");
+          message.error(t("clientDeleteFail"));
         }
       },
     });
@@ -155,7 +157,7 @@ const ClientDetails = () => {
 
   // Handle file upload
   const handleUpload = async () => {
-    if (!file) return message.warning("Please select a file first.");
+    if (!file) return message.warning(t("fileSelectWarning"));
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -163,14 +165,14 @@ const ClientDetails = () => {
 
     try {
       await axios.post(`/analyse/upload/${clientId}`, formData);
-      message.success("File uploaded successfully.");
+      message.success(t("fileUploadSuccess"));
       setFile(null);
       const updatedList = await axios.get(`/analyse/list/${clientId}`);
       setAnalyses(updatedList.data || []);
       setFileList([]);
     } catch (error) {
       console.error("Upload error:", error);
-      message.error("Failed to upload file.");
+      message.error(t("fileUploadFail"));
     } finally {
       setUploading(false);
     }
@@ -179,20 +181,20 @@ const ClientDetails = () => {
   // Handle file deletion with confirmation
   const handleDeleteFile = (fileId, fileName) => {
     confirm({
-      title: `Are you sure you want to delete "${fileName}"?`,
+      title: t("confirmDeleteFile", { fileName }),
       icon: <ExclamationCircleOutlined />,
-      okText: "Yes",
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       async onOk() {
         try {
           await axios.delete(`/analyse/${fileId}`);
-          message.success("File deleted successfully.");
+          message.success(t("fileDeleteSuccess"));
           const updatedList = await axios.get(`/analyse/list/${clientId}`);
           setAnalyses(updatedList.data || []);
         } catch (error) {
           console.error("Delete error:", error);
-          message.error("Failed to delete file.");
+          message.error(t("fileDeleteFail"));
         }
       },
     });
@@ -220,9 +222,7 @@ const ClientDetails = () => {
     return (
       <Layout style={{ minHeight: "100vh" }}>
         <Content style={{ textAlign: "center", marginTop: "50px" }}>
-          <Typography.Text type="danger">
-            Client data could not be found!
-          </Typography.Text>
+          <Typography.Text type="danger">{t("clientNotFound")}</Typography.Text>
         </Content>
       </Layout>
     );
@@ -264,10 +264,10 @@ const ClientDetails = () => {
                     setIsModalOpen(true);
                   }}
                 >
-                  Update Client
+                  {t("updateClient")}
                 </Button>,
                 <Button danger onClick={handleDeleteClient}>
-                  Delete Client
+                  {t("deleteClient")}
                 </Button>,
               ]}
             >
@@ -278,31 +278,36 @@ const ClientDetails = () => {
                 {`${clientData.name} ${clientData.lastName}`}
               </Title>
               <Descriptions bordered column={1}>
-                <Descriptions.Item label="Patronymic">
+                <Descriptions.Item label={t("patronymic")}>
                   {clientData.patronymic}
                 </Descriptions.Item>
-                <Descriptions.Item label="Gender">
-                  {clientData.gender === "MALE" ? "Male" : "Female"}
+
+                <Descriptions.Item label={t("gender")}>
+                  {t(`genderOptions.${clientData.gender}`, {
+                    defaultValue: clientData.gender,
+                  })}
                 </Descriptions.Item>
-                <Descriptions.Item label="Birthday">
+
+                <Descriptions.Item label={t("birthday")}>
                   {clientData.birthday
                     ? moment(clientData.birthday, "DD/MM/YYYY").format(
                         "DD/MM/YYYY"
                       )
-                    : "N/A"}
+                    : t("notAvailable")}
                 </Descriptions.Item>
 
-                <Descriptions.Item label="Phone Number">
+                <Descriptions.Item label={t("phoneNumber")}>
                   {clientData.phoneNumber}
                 </Descriptions.Item>
-                <Descriptions.Item label="Address">
+
+                <Descriptions.Item label={t("address")}>
                   {clientData.address}
                 </Descriptions.Item>
               </Descriptions>
 
               {/* Upload section */}
               <div style={{ marginTop: "24px" }}>
-                <Title level={5}>Upload Analiz File</Title>
+                <Title level={5}>{t("uploadAnalysis")}</Title>
                 <Upload
                   beforeUpload={(file) => {
                     setFile(file);
@@ -316,7 +321,7 @@ const ClientDetails = () => {
                   }}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Select File</Button>
+                  <Button icon={<UploadOutlined />}>{t("selectFile")}</Button>
                 </Upload>
 
                 <Button
@@ -326,7 +331,7 @@ const ClientDetails = () => {
                   loading={uploading}
                   style={{ marginTop: "8px" }}
                 >
-                  Upload
+                  {t("upload")}
                 </Button>
               </div>
             </Card>
@@ -335,7 +340,7 @@ const ClientDetails = () => {
           {/* Right column - Uploaded analyses list */}
           <Col xs={24} md={12}>
             <Card
-              title="📂 Uploaded Analyses"
+              title={t("uploadedAnalyses")}
               style={{
                 borderRadius: "10px",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
@@ -346,7 +351,7 @@ const ClientDetails = () => {
             >
               {analyses.length === 0 ? (
                 <Typography.Text type="secondary">
-                  No analyses found.
+                  {t("noAnalyses")}
                 </Typography.Text>
               ) : (
                 <ul style={{ padding: 0, listStyle: "none", margin: 0 }}>
@@ -383,7 +388,7 @@ const ClientDetails = () => {
                         danger
                         onClick={() => handleDeleteFile(item.id, item.fileName)}
                       >
-                        Delete
+                        {t("delete")}
                       </Button>
                     </li>
                   ))}
@@ -395,7 +400,7 @@ const ClientDetails = () => {
 
         {/* Update client modal */}
         <Modal
-          title="Update Client Information"
+          title={t("updateClientInfo")}
           open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           onOk={() => {
@@ -412,57 +417,52 @@ const ClientDetails = () => {
           <Form form={form} layout="vertical">
             <Form.Item
               name="name"
-              label="First Name"
-              rules={[
-                { required: true, message: "Please enter the first name!" },
-              ]}
+              label={t("firstName")}
+              rules={[{ required: true, message: t("pleaseEnterFirstName") }]}
             >
               <Input />
             </Form.Item>
+
             <Form.Item
               name="lastName"
-              label="Last Name"
-              rules={[
-                { required: true, message: "Please enter the last name!" },
-              ]}
+              label={t("lastName")}
+              rules={[{ required: true, message: t("pleaseEnterLastName") }]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name="patronymic" label="Patronymic">
+
+            <Form.Item name="patronymic" label={t("patronymic")}>
               <Input />
             </Form.Item>
+
             <Form.Item
               name="gender"
-              label="Gender"
-              rules={[{ required: true, message: "Please select the gender!" }]}
+              label={t("gender")}
+              rules={[{ required: true, message: t("pleaseSelectGender") }]}
             >
               <Select>
-                <Option value="MALE">Male</Option>
-                <Option value="FEMALE">Female</Option>
+                <Option value="MALE">{t("genderOptions.MALE")}</Option>
+                <Option value="FEMALE">{t("genderOptions.FEMALE")}</Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              name="birthday"
-              label="Birthday"
-              rules={[{ required: false }]}
-            >
+
+            <Form.Item name="birthday" label={t("birthday")}>
               <DatePicker
                 disabled
                 style={{ width: "100%" }}
-                format="DD/MM/YYYY" // controls how it looks in UI
+                format="DD/MM/YYYY"
               />
             </Form.Item>
 
             <Form.Item
               name="phoneNumber"
-              label="Phone Number"
-              rules={[
-                { required: true, message: "Please enter the phone number!" },
-              ]}
+              label={t("phoneNumber")}
+              rules={[{ required: true, message: t("pleaseEnterPhone") }]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name="address" label="Address">
+
+            <Form.Item name="address" label={t("address")}>
               <Input />
             </Form.Item>
           </Form>
