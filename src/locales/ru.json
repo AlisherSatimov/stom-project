@@ -58,5 +58,38 @@
   "pleaseEnterAddress": "Пожалуйста, введите адрес!",
 
   "somethingWentWrong": "Произошла ошибка. Пожалуйста, попробуйте снова!",
-  "createClientError": "Не удалось создать клиента. Проверьте соединение и попробуйте снова."
+  "createClientError": "Не удалось создать клиента. Проверьте соединение и попробуйте снова.",
+
+  "name": "Имя",
+  "action": "Действия",
+
+  "addQueue": "Добавить в очередь",
+  "delete": "Удалить",
+
+  "areYouSureDeleteClient": "Вы уверены, что хотите удалить этого клиента?",
+  "cannotBeUndone": "Это действие невозможно отменить.",
+  "yes": "Да",
+  "no": "Нет",
+
+  "clientDeletedSuccess": "Клиент успешно удалён!",
+  "clientDeleteFail": "Не удалось удалить клиента.",
+  "clientDeleteError": "Произошла ошибка при удалении клиента.",
+
+  "employee": "Сотрудник",
+  "pleaseSelectEmployee": "Пожалуйста, выберите сотрудника!",
+  "appointmentDate": "Дата приёма",
+  "appointmentDataFail": "Не удалось загрузить данные приёма.",
+
+  "queueCreatedSuccess": "Очередь успешно создана!",
+  "queueCreateFail": "Не удалось создать очередь.",
+  "queueCreateError": "Произошла ошибка. Пожалуйста, попробуйте снова.",
+
+  "search": "Поиск",
+  "searchPlaceholder": "Поиск по {{field}}",
+  "slotBusyWarning": "Нельзя выбрать диапазон с занятыми слотами.",
+
+  "genderOptions": {
+    "MALE": "Мужской",
+    "FEMALE": "Женский"
+  }
 }

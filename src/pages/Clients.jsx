@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SearchOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -22,8 +23,8 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const Clients = () => {
+  const { t } = useTranslation();
   // === STATE MANAGEMENT ===
-  // const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [appointments, setAppointments] = useState([]);
 
@@ -360,42 +361,43 @@ const Clients = () => {
   // === TABLE COLUMN DEFINITIONS ===
   const columns = [
     {
-      title: "Name",
+      title: t("name"),
       dataIndex: "name",
       key: "name",
       width: "20%",
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Birthday",
+      title: t("birthday"),
       dataIndex: "birthday",
       key: "birthday",
       width: "10%",
       ...getColumnSearchProps("birthday"),
     },
     {
-      title: "Gender",
+      title: t("gender"),
       dataIndex: "gender",
       key: "gender",
       width: "10%",
       ...getColumnSearchProps("gender"),
+      render: (value) => t(`genderOptions.${value}`, { defaultValue: value }),
     },
     {
-      title: "Address",
+      title: t("address"),
       dataIndex: "address",
       key: "address",
       width: "30%",
       ...getColumnSearchProps("address"),
     },
     {
-      title: "Phone Number",
+      title: t("phoneNumber"),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
       width: "15%",
       ...getColumnSearchProps("phoneNumber"),
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "operation",
       width: "15%",
       render: (_, record) => (
@@ -406,6 +408,7 @@ const Clients = () => {
               handleAddQueue(record);
             }}
             style={{
+              whiteSpace: "nowrap",
               cursor: "pointer",
               border: "1px solid green",
               padding: "8px 16px",
@@ -414,7 +417,7 @@ const Clients = () => {
               color: "green",
             }}
           >
-            Add_Queue
+            {t("addQueue")}
           </a>
           <a
             onClick={(e) => {
@@ -430,7 +433,7 @@ const Clients = () => {
               color: "red",
             }}
           >
-            Delete
+            {t("delete")}
           </a>
         </Space>
       ),

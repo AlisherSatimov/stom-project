@@ -58,5 +58,38 @@
   "pleaseEnterAddress": "Iltimos, manzilni kiriting!",
 
   "somethingWentWrong": "Xatolik yuz berdi. Qaytadan urinib ko‘ring!",
-  "createClientError": "Mijozni yaratib bo‘lmadi. Iltimos, ulanishni tekshirib qayta urinib ko‘ring."
+  "createClientError": "Mijozni yaratib bo‘lmadi. Iltimos, ulanishni tekshirib qayta urinib ko‘ring.",
+
+  "name": "Ism",
+  "action": "Amallar",
+
+  "addQueue": "Navbatga qo‘shish",
+  "delete": "O‘chirish",
+
+  "areYouSureDeleteClient": "Ushbu mijozni o‘chirishga ishonchingiz komilmi?",
+  "cannotBeUndone": "Bu amalni bekor qilib bo‘lmaydi.",
+  "yes": "Ha",
+  "no": "Yo‘q",
+
+  "clientDeletedSuccess": "Mijoz muvaffaqiyatli o‘chirildi!",
+  "clientDeleteFail": "Mijozni o‘chirish muvaffaqiyatsiz tugadi.",
+  "clientDeleteError": "Mijozni o‘chirishda xatolik yuz berdi.",
+
+  "employee": "Xodim",
+  "pleaseSelectEmployee": "Iltimos, xodimni tanlang!",
+  "appointmentDate": "Qabul sanasi",
+  "appointmentDataFail": "Qabul ma'lumotlarini yuklab bo‘lmadi.",
+
+  "queueCreatedSuccess": "Navbat muvaffaqiyatli yaratildi!",
+  "queueCreateFail": "Navbatni yaratib bo‘lmadi.",
+  "queueCreateError": "Xatolik yuz berdi. Qayta urinib ko‘ring.",
+
+  "search": "Qidirish",
+  "searchPlaceholder": "{{field}} bo‘yicha qidirish",
+  "slotBusyWarning": "Band bo‘lgan vaqtni o‘z ichiga olgan oraliqni tanlab bo‘lmaydi.",
+
+  "genderOptions": {
+    "MALE": "Erkak",
+    "FEMALE": "Ayol"
+  }
 }
