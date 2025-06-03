@@ -28,8 +28,6 @@
   "notificationDeletedError": "Ошибка при удалении уведомления.",
   "confirmDeleteTitle": "Вы уверены?",
   "confirmDeleteContent": "Вы хотите удалить это уведомление?",
-  "confirmDeleteOk": "Да",
-  "confirmDeleteCancel": "Нет",
   "failedToLoad": "Не удалось загрузить уведомления.",
   "noNotifications": "Нет доступных уведомлений.",
   "doneButton": "Готово",
@@ -75,8 +73,8 @@
   "clientDeleteFail": "Не удалось удалить клиента.",
   "clientDeleteError": "Произошла ошибка при удалении клиента.",
 
-  "employee": "Сотрудник",
-  "pleaseSelectEmployee": "Пожалуйста, выберите сотрудника!",
+  "dentist": "Стоматолог",
+  "pleaseSelectEmployee": "Пожалуйста, выберите стоматолога!",
   "appointmentDate": "Дата приёма",
   "appointmentDataFail": "Не удалось загрузить данные приёма.",
 

@@ -28,8 +28,6 @@
   "notificationDeletedError": "Bildirishnomani o‘chirishda xatolik yuz berdi.",
   "confirmDeleteTitle": "Ishonchingiz komilmi?",
   "confirmDeleteContent": "Ushbu bildirishnomani o‘chirmoqchimisiz?",
-  "confirmDeleteOk": "Ha",
-  "confirmDeleteCancel": "Yo‘q",
   "failedToLoad": "Bildirishnomalarni yuklab bo‘lmadi.",
   "noNotifications": "Hech qanday bildirishnoma mavjud emas.",
   "doneButton": "Bajarildi",
@@ -75,8 +73,8 @@
   "clientDeleteFail": "Mijozni o‘chirish muvaffaqiyatsiz tugadi.",
   "clientDeleteError": "Mijozni o‘chirishda xatolik yuz berdi.",
 
-  "employee": "Xodim",
-  "pleaseSelectEmployee": "Iltimos, xodimni tanlang!",
+  "dentist": "Tish shifokori",
+  "pleaseSelectEmployee": "Iltimos, tish shifokorini tanlang!",
   "appointmentDate": "Qabul sanasi",
   "appointmentDataFail": "Qabul ma'lumotlarini yuklab bo‘lmadi.",
 

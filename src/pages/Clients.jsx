@@ -134,7 +134,7 @@ const Clients = () => {
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           autoFocus
-          placeholder={`Search ${dataIndex}`}
+          placeholder={t("searchPlaceholder", { field: t(dataIndex) })}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -150,14 +150,14 @@ const Clients = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            {t("search")}
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{ width: 90 }}
           >
-            Reset
+            {t("reset")}
           </Button>
         </Space>
       </div>
@@ -193,26 +193,26 @@ const Clients = () => {
   // === DELETE CLIENT WITH CONFIRMATION MODAL ===
   const handleDelete = (clientId) => {
     confirm({
-      title: "Are you sure you want to delete this client?",
+      title: t("areYouSureDeleteClient"),
       icon: <ExclamationCircleOutlined />,
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: async () => {
         try {
           const response = await axios.delete(
             `/client/passive-delete/${clientId}`
           );
           if (response.status === 200) {
-            message.success("Client deleted successfully!");
-            queryClient.invalidateQueries(["clients"]); // 🔄 cache yangilanadi
+            message.success(t("clientDeletedSuccess"));
+            queryClient.invalidateQueries(["clients"]);
           } else {
-            message.error("Failed to delete client.");
+            message.error(t("clientDeleteFail"));
           }
         } catch (error) {
           console.error("Error deleting client:", error);
-          message.error("An error occurred while deleting the client.");
+          message.error(t("clientDeleteError"));
         }
       },
     });
@@ -294,7 +294,7 @@ const Clients = () => {
       const hasBusy = range.some((slot) => slot.busy);
 
       if (hasBusy) {
-        message.warning("You can't select a range that includes busy slots.");
+        message.warning(t("slotBusyWarning"));
         return;
       }
 
@@ -315,7 +315,7 @@ const Clients = () => {
         setAppointments(response.data); // ✅ backenddan yangilash
       }
     } catch (error) {
-      message.error("Failed to load appointment data.");
+      message.error(t("appointmentDataFail"));
     }
   };
 
@@ -346,15 +346,15 @@ const Clients = () => {
     try {
       const response = await axios.post("/patient/create", payload);
       if (response.status === 200) {
-        message.success("Queue successfully created!");
+        message.success(t("queueCreatedSuccess"));
         setIsModalVisible(false);
         resetModalState(); // ✅ Clear modal state
       } else {
-        message.error("Failed to create queue.");
+        message.error(t("queueCreateFail"));
       }
     } catch (error) {
       console.error("Error creating queue:", error);
-      message.error("An error occurred. Please try again.");
+      message.error(t("queueCreateError"));
     }
   };
 
@@ -466,11 +466,11 @@ const Clients = () => {
         <Form form={form} onFinish={handleModalOk}>
           <Form.Item
             name="employeeId"
-            label="Employee"
-            rules={[{ required: true, message: "Please select an employee!" }]}
+            label={t("dentist")}
+            rules={[{ required: true, message: t("pleaseSelectEmployee") }]}
           >
             <Select
-              placeholder="Select an employee"
+              placeholder={t("pleaseSelectEmployee")}
               onChange={(value) => {
                 // reset date and selected slots when employee changes
                 setSelectedDate(null);
@@ -489,9 +489,14 @@ const Clients = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Appointment Date" name="appointmentTime" required>
+          <Form.Item
+            label={t("appointmentDate")}
+            name="appointmentTime"
+            required
+          >
             <DatePicker
               style={{ width: "100%" }}
+              placeholder={t("appointmentDate")}
               disabledDate={(current) =>
                 current && current < new Date().setHours(0, 0, 0, 0)
               }

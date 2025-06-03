@@ -28,8 +28,6 @@
   "notificationDeletedError": "Error deleting notification.",
   "confirmDeleteTitle": "Are you sure?",
   "confirmDeleteContent": "Do you want to delete this notification?",
-  "confirmDeleteOk": "Yes",
-  "confirmDeleteCancel": "No",
   "failedToLoad": "Failed to load notifications.",
   "noNotifications": "No notifications available.",
   "doneButton": "Done",
@@ -75,8 +73,8 @@
   "clientDeleteFail": "Failed to delete client.",
   "clientDeleteError": "An error occurred while deleting the client.",
 
-  "employee": "Employee",
-  "pleaseSelectEmployee": "Please select an employee!",
+  "dentist": "Dentist",
+  "pleaseSelectEmployee": "Please select a dentist!",
   "appointmentDate": "Appointment Date",
   "appointmentDataFail": "Failed to load appointment data.",
 
