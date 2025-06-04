@@ -190,5 +190,29 @@
   "errorLoginExists": "This username already exists",
   "errorPhoneExists": "This phone number already exists",
 
-  "unexpectedError": "An unexpected error occurred"
+  "unexpectedError": "An unexpected error occurred",
+
+  "allClients": "All Clients",
+  "allServices": "All Services",
+  "allPatients": "All Patients",
+  "allEmployees": "All Employees",
+  "monthlyTreatedPatients": "Monthly Treated Patients",
+  "monthlyIncomeExpense": "Monthly Income & Expense",
+  "income": "Income",
+  "dashboardLoadError": "Failed to load dashboard data.",
+
+  "months": {
+    "Jan": "Jan",
+    "Feb": "Feb",
+    "Mar": "Mar",
+    "Apr": "Apr",
+    "May": "May",
+    "Jun": "Jun",
+    "Jul": "Jul",
+    "Aug": "Aug",
+    "Sep": "Sep",
+    "Oct": "Oct",
+    "Nov": "Nov",
+    "Dec": "Dec"
+  }
 }

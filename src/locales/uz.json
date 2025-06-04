@@ -189,5 +189,29 @@
   "errorLoginExists": "Bunday foydalanuvchi nomi allaqachon mavjud",
   "errorPhoneExists": "Bunday telefon raqam allaqachon mavjud",
 
-  "unexpectedError": "Kutilmagan xatolik yuz berdi"
+  "unexpectedError": "Kutilmagan xatolik yuz berdi",
+
+  "allClients": "Barcha mijozlar",
+  "allServices": "Barcha xizmatlar",
+  "allPatients": "Barcha bemorlar",
+  "allEmployees": "Barcha xodimlar",
+  "monthlyTreatedPatients": "Oylik davolangan bemorlar",
+  "monthlyIncomeExpense": "Oylik daromad va xarajat",
+  "income": "Daromad",
+  "dashboardLoadError": "Boshqaruv paneli ma'lumotlarini yuklab bo'lmadi.",
+
+  "months": {
+    "Jan": "Yan",
+    "Feb": "Fev",
+    "Mar": "Mar",
+    "Apr": "Apr",
+    "May": "May",
+    "Jun": "Iyun",
+    "Jul": "Iyul",
+    "Aug": "Avg",
+    "Sep": "Sen",
+    "Oct": "Okt",
+    "Nov": "Noy",
+    "Dec": "Dek"
+  }
 }

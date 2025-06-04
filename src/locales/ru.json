@@ -189,5 +189,29 @@
   "errorLoginExists": "Такое имя пользователя уже существует",
   "errorPhoneExists": "Такой номер телефона уже существует",
 
-  "unexpectedError": "Произошла непредвиденная ошибка"
+  "unexpectedError": "Произошла непредвиденная ошибка",
+
+  "allClients": "Все клиенты",
+  "allServices": "Все услуги",
+  "allPatients": "Все пациенты",
+  "allEmployees": "Все сотрудники",
+  "monthlyTreatedPatients": "Ежемесячно обслуженные пациенты",
+  "monthlyIncomeExpense": "Ежемесячный доход и расходы",
+  "income": "Доход",
+  "dashboardLoadError": "Не удалось загрузить данные панели управления.",
+
+  "months": {
+    "Jan": "Янв",
+    "Feb": "Фев",
+    "Mar": "Мар",
+    "Apr": "Апр",
+    "May": "Май",
+    "Jun": "Июн",
+    "Jul": "Июл",
+    "Aug": "Авг",
+    "Sep": "Сен",
+    "Oct": "Окт",
+    "Nov": "Ноя",
+    "Dec": "Дек"
+  }
 }
