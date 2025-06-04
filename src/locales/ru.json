@@ -161,5 +161,33 @@
   "pleaseEnterPrice": "Пожалуйста, введите цену",
   "pleaseEnterExpense": "Пожалуйста, введите расход",
   "invalidPriceOrExpense": "Цена или расход указаны некорректно",
-  "serviceIdNotFound": "ID выбранной услуги не найден!"
+  "serviceIdNotFound": "ID выбранной услуги не найден!",
+
+  "createNewEmployee": "Создать нового сотрудника",
+  "email": "Эл. почта",
+  "role": "Роль",
+  "selectRole": "Выберите роль",
+  "admin": "Админ",
+  "pleaseEnterLogin": "Пожалуйста, введите логин!",
+  "pleaseEnterPassword": "Пожалуйста, введите пароль!",
+  "pleaseEnterValidEmail": "Пожалуйста, введите корректный email!",
+  "pleaseSelectRole": "Пожалуйста, выберите роль!",
+  "pleaseEnterPhoneNumber": "Пожалуйста, введите номер телефона!",
+  "employeeCreated": "Сотрудник успешно создан!",
+
+  "placeholderFirstName": "Введите имя",
+  "placeholderLastName": "Введите фамилию",
+  "placeholderPatronymic": "Введите отчество",
+  "placeholderLogin": "Введите логин",
+  "placeholderPassword": "Введите пароль",
+  "placeholderEmail": "Введите адрес электронной почты",
+  "placeholderPhone": "Введите номер телефона",
+  "placeholderAddress": "Введите адрес",
+  "placeholderBirthday": "Выберите дату рождения",
+
+  "errorEmailExists": "Такой адрес электронной почты уже существует",
+  "errorLoginExists": "Такое имя пользователя уже существует",
+  "errorPhoneExists": "Такой номер телефона уже существует",
+
+  "unexpectedError": "Произошла непредвиденная ошибка"
 }

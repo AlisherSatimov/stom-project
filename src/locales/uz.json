@@ -20,7 +20,7 @@
 
   "dashboard": "Boshqaruv paneli",
   "employees": "Hodimlar",
-  "createEmployee": "Yangi hodim",
+  "createEmployee": "Yangi hodim yaratish",
   "serviceController": "Xizmatlar boshqaruvi",
 
   "notificationDeletedSuccess": "Bildirishnoma muvaffaqiyatli o‘chirildi!",
@@ -161,5 +161,33 @@
   "pleaseEnterPrice": "Iltimos, narxni kiriting",
   "pleaseEnterExpense": "Iltimos, xarajatni kiriting",
   "invalidPriceOrExpense": "Narx yoki xarajat noto‘g‘ri son",
-  "serviceIdNotFound": "Xizmat ID topilmadi!"
+  "serviceIdNotFound": "Xizmat ID topilmadi!",
+
+  "createNewEmployee": "Yangi xodim yaratish",
+  "email": "Elektron pochta",
+  "role": "Rol",
+  "selectRole": "Rolni tanlang",
+  "admin": "Admin",
+  "pleaseEnterLogin": "Iltimos, loginni kiriting!",
+  "pleaseEnterPassword": "Iltimos, parolni kiriting!",
+  "pleaseEnterValidEmail": "Iltimos, to'g'ri email manzil kiriting!",
+  "pleaseSelectRole": "Iltimos, rolni tanlang!",
+  "pleaseEnterPhoneNumber": "Iltimos, telefon raqamni kiriting!",
+  "employeeCreated": "Xodim muvaffaqiyatli yaratildi!",
+
+  "placeholderFirstName": "Ism kiriting",
+  "placeholderLastName": "Familiya kiriting",
+  "placeholderPatronymic": "Otasining ismi",
+  "placeholderLogin": "Login kiriting",
+  "placeholderPassword": "Parol kiriting",
+  "placeholderEmail": "Email manzil",
+  "placeholderPhone": "Telefon raqami",
+  "placeholderAddress": "Manzil",
+  "placeholderBirthday": "Tug‘ilgan sanani tanlang",
+
+  "errorEmailExists": "Bunday email allaqachon mavjud",
+  "errorLoginExists": "Bunday foydalanuvchi nomi allaqachon mavjud",
+  "errorPhoneExists": "Bunday telefon raqam allaqachon mavjud",
+
+  "unexpectedError": "Kutilmagan xatolik yuz berdi"
 }

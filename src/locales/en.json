@@ -162,5 +162,33 @@
   "pleaseEnterPrice": "Please enter price",
   "pleaseEnterExpense": "Please enter expense",
   "invalidPriceOrExpense": "Price or expense is not a valid number",
-  "serviceIdNotFound": "Selected service ID not found!"
+  "serviceIdNotFound": "Selected service ID not found!",
+
+  "createNewEmployee": "Create New Employee",
+  "email": "Email",
+  "role": "Role",
+  "selectRole": "Select role",
+  "admin": "Admin",
+  "pleaseEnterLogin": "Please enter login!",
+  "pleaseEnterPassword": "Please enter password!",
+  "pleaseEnterValidEmail": "Please enter valid email!",
+  "pleaseSelectRole": "Please select a role!",
+  "pleaseEnterPhoneNumber": "Please enter phone number!",
+  "employeeCreated": "Employee created successfully!",
+
+  "placeholderFirstName": "Enter first name",
+  "placeholderLastName": "Enter last name",
+  "placeholderPatronymic": "Enter patronymic",
+  "placeholderLogin": "Enter login",
+  "placeholderPassword": "Enter password",
+  "placeholderEmail": "Enter email address",
+  "placeholderPhone": "Enter phone number",
+  "placeholderAddress": "Enter address",
+  "placeholderBirthday": "Select birth date",
+
+  "errorEmailExists": "This email already exists",
+  "errorLoginExists": "This username already exists",
+  "errorPhoneExists": "This phone number already exists",
+
+  "unexpectedError": "An unexpected error occurred"
 }

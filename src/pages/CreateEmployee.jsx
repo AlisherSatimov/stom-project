@@ -12,11 +12,13 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "../utils/axiosInstance"; // Custom axios instance with interceptor and token
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const CreateEmployee = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Handler function to submit the form
@@ -52,15 +54,25 @@ const CreateEmployee = () => {
       const response = await axios.post("/auth/create", employeeData);
 
       if (response.status >= 200 && response.status < 300) {
-        message.success("Employe Created");
+        message.success(t("employeeCreated"));
         navigate("/admin/employees");
       } else {
-        message.error("Somthong went wrong, please try again!");
+        message.error(t("somethingWentWrong"));
       }
     } catch (error) {
       console.error("Error creating employee:", error);
       if (error.response && error.response.status === 400) {
-        message.error(error.response.data?.error);
+        const errorMsg = error.response.data?.error;
+
+        if (errorMsg === "Bunday mail mavjud") {
+          message.error(t("errorEmailExists"));
+        } else if (errorMsg === "Bunday foydalanuvchi nomi mavjud") {
+          message.error(t("errorLoginExists"));
+        } else if (errorMsg === "Bunday telefon raqam mavjud") {
+          message.error(t("errorPhoneExists"));
+        } else {
+          message.error(t("unexpectedError")); // noma’lum xatolik matnini to‘g‘ridan-to‘g‘ri chiqarish
+        }
       }
     }
   };
@@ -80,7 +92,7 @@ const CreateEmployee = () => {
     >
       {/* Page title */}
       <Title level={2} style={{ textAlign: "center", marginBottom: "30px" }}>
-        Create New Employee
+        {t("createNewEmployee")}
       </Title>
 
       {/* Ant Design vertical form */}
@@ -89,89 +101,95 @@ const CreateEmployee = () => {
           <Col span={12}>
             {/* Left column fields */}
             <Form.Item
-              label={<span className="form-label">First Name</span>}
+              label={<span className="form-label">{t("firstName")}</span>}
               name="firstName"
-              rules={[{ required: true, message: "Please enter first name!" }]}
+              rules={[{ required: true, message: t("pleaseEnterFirstName") }]}
             >
-              <Input size="large" placeholder="John" />
+              <Input size="large" placeholder={t("placeholderFirstName")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Last Name</span>}
+              label={<span className="form-label">{t("lastName")}</span>}
               name="lastName"
-              rules={[{ required: true, message: "Please enter last name!" }]}
+              rules={[{ required: true, message: t("pleaseEnterLastName") }]}
             >
-              <Input size="large" placeholder="Doe" />
+              <Input size="large" placeholder={t("placeholderLastName")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Patronymic</span>}
+              label={<span className="form-label">{t("patronymic")}</span>}
               name="patronymic"
+              rules={[{ required: true, message: t("pleaseEnterPatronymic") }]}
             >
-              <Input size="large" placeholder="Wilson" />
+              <Input size="large" placeholder={t("placeholderPatronymic")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Login</span>}
+              label={<span className="form-label">{t("login")}</span>}
               name="login"
-              rules={[{ required: true, message: "Please enter login!" }]}
+              rules={[{ required: true, message: t("pleaseEnterLogin") }]}
             >
-              <Input size="large" placeholder="Login" />
+              <Input size="large" placeholder={t("placeholderLogin")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Password</span>}
+              label={<span className="form-label">{t("password")}</span>}
               name="password"
-              rules={[{ required: true, message: "Please enter password!" }]}
+              rules={[{ required: true, message: t("pleaseEnterPassword") }]}
             >
-              <Input.Password size="large" placeholder="Password" />
+              <Input.Password
+                size="large"
+                placeholder={t("placeholderPassword")}
+              />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             {/* Right column fields */}
             <Form.Item
-              label={<span className="form-label">Email</span>}
+              label={<span className="form-label">{t("email")}</span>}
               name="email"
               rules={[
                 {
                   required: true,
                   type: "email",
-                  message: "Please enter valid email!",
+                  message: t("pleaseEnterValidEmail"),
                 },
               ]}
             >
-              <Input size="large" placeholder="johndoe@gmail.com" />
+              <Input size="large" placeholder={t("placeholderEmail")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Role</span>}
+              label={<span className="form-label">{t("role")}</span>}
               name="role"
-              rules={[{ required: true, message: "Please select a role!" }]}
+              rules={[{ required: true, message: t("pleaseSelectRole") }]}
             >
-              <Select size="large" placeholder="Select role">
-                <Option value="ROLE_ADMIN">Admin</Option>
-                <Option value="ROLE_MODERATOR">Moderator</Option>
-                <Option value="ROLE_USER">User</Option>
+              <Select size="large" placeholder={t("selectRole")}>
+                <Option value="ROLE_ADMIN">{t("admin")}</Option>
+                <Option value="ROLE_MODERATOR">{t("manager")}</Option>
+                <Option value="ROLE_USER">{t("dentist")}</Option>
               </Select>
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Birthday</span>}
+              label={<span className="form-label">{t("birthday")}</span>}
               name="birthDay"
-              rules={[{ required: true, message: "Please select birthday!" }]}
+              rules={[{ required: true, message: t("pleaseSelectBirthday") }]}
             >
-              <DatePicker size="large" style={{ width: "100%" }} />
+              <DatePicker
+                size="large"
+                style={{ width: "100%" }}
+                placeholder={t("placeholderBirthday")}
+              />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Phone Number</span>}
+              label={<span className="form-label">{t("phoneNumber")}</span>}
               name="phoneNumber"
-              rules={[
-                { required: true, message: "Please enter phone number!" },
-              ]}
+              rules={[{ required: true, message: t("pleaseEnterPhoneNumber") }]}
             >
-              <Input size="large" placeholder="+998912345678" />
+              <Input size="large" placeholder={t("placeholderPhone")} />
             </Form.Item>
             <Form.Item
-              label={<span className="form-label">Address</span>}
+              label={<span className="form-label">{t("address")}</span>}
               name="address"
-              rules={[{ required: true, message: "Please enter address!" }]}
+              rules={[{ required: true, message: t("pleaseEnterAddress") }]}
             >
-              <Input size="large" placeholder="Address" />
+              <Input size="large" placeholder={t("placeholderAddress")} />
             </Form.Item>
           </Col>
         </Row>
@@ -184,7 +202,7 @@ const CreateEmployee = () => {
             size="large"
             style={{ width: "100%" }}
           >
-            Create Employee
+            {t("createEmployee")}
           </Button>
         </Form.Item>
       </Form>
