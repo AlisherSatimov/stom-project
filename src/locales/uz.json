@@ -112,5 +112,33 @@
   "fileDownloadFail": "Faylni yuklab olishda xatolik.",
   "fileDeleteSuccess": "Fayl muvaffaqiyatli o‘chirildi.",
   "fileDeleteFail": "Faylni o‘chirishda xatolik.",
-  "confirmDeleteFile": "\"{{fileName}}\" faylini o‘chirishga ishonchingiz komilmi?"
+  "confirmDeleteFile": "\"{{fileName}}\" faylini o‘chirishga ishonchingiz komilmi?",
+
+  "clientName": "Mijoz ismi",
+  "date": "Sana",
+  "dentistName": "Stomatolog ismi",
+  "services": "Xizmatlar",
+  "status": "Holati",
+  "tooth": "Tish",
+
+  "finished": "Tugallangan",
+  "pending": "Jarayonda",
+  "price": "Narxi",
+  "pay": "To‘lash",
+  "areYouSureDelete": "Ushbu bemorni o‘chirmoqchimisiz?",
+  "cannotUndo": "Bu amalni bekor qilib bo‘lmaydi.",
+  "processPayment": "To‘lovni amalga oshirish",
+  "totalAmount": "Jami summa",
+  "paidAlready": "To‘langan",
+  "remaining": "Qolgan",
+  "paidValue": "To‘langan summa",
+  "pleaseEnterPaidValue": "Iltimos, to‘langan summani kiriting",
+  "maxDebtExceeded": "Qiymat qarzdan oshmasligi kerak: {{max}} so‘m",
+  "maxAllowed": "Maksimal ruxsat etilgan: {{max}} so‘m",
+  "patientDeleted": "Bemor muvaffaqiyatli o‘chirildi!",
+  "deleteError": "Bemorni o‘chirishda xatolik yuz berdi.",
+  "paymentError": "To‘lovni amalga oshirishda xatolik yuz berdi.",
+  "loadPaymentFail": "To‘lov tarixi yuklanmadi.",
+
+  "paymentSuccessWithRemaining": "{{paid}} so'm to'landi, {{remaining}} so'm qoldi"
 }

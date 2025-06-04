@@ -112,5 +112,33 @@
   "fileDownloadFail": "Ошибка при загрузке файла.",
   "fileDeleteSuccess": "Файл успешно удалён.",
   "fileDeleteFail": "Не удалось удалить файл.",
-  "confirmDeleteFile": "Вы уверены, что хотите удалить файл \"{{fileName}}\"?"
+  "confirmDeleteFile": "Вы уверены, что хотите удалить файл \"{{fileName}}\"?",
+
+  "clientName": "Имя клиента",
+  "date": "Дата",
+  "dentistName": "Имя стоматолога",
+  "services": "Услуги",
+  "status": "Статус",
+  "tooth": "Зуб",
+
+  "finished": "Завершено",
+  "pending": "В процессе",
+  "price": "Цена",
+  "pay": "Оплатить",
+  "areYouSureDelete": "Вы уверены, что хотите удалить этого пациента?",
+  "cannotUndo": "Это действие невозможно отменить.",
+  "processPayment": "Обработка платежа",
+  "totalAmount": "Общая сумма",
+  "paidAlready": "Уже оплачено",
+  "remaining": "Осталось",
+  "paidValue": "Сумма оплаты",
+  "pleaseEnterPaidValue": "Пожалуйста, введите сумму оплаты",
+  "maxDebtExceeded": "Значение не может превышать задолженность: {{max}} сум",
+  "maxAllowed": "Максимально допустимо: {{max}} сум",
+  "patientDeleted": "Пациент успешно удален!",
+  "deleteError": "Ошибка при удалении пациента.",
+  "paymentError": "Ошибка при обработке платежа.",
+  "loadPaymentFail": "Не удалось загрузить историю платежей.",
+
+  "paymentSuccessWithRemaining": "{{paid}} сум оплачено, осталось {{remaining}} сум"
 }

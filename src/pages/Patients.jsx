@@ -3,8 +3,10 @@ import { Badge, Space, Table, Modal, message, Form, Input } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Patients = () => {
+  const { t } = useTranslation();
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -35,11 +37,11 @@ const Patients = () => {
   const deleteMutation = useMutation({
     mutationFn: (id) => axios.delete(`/patient/${id}`),
     onSuccess: () => {
-      message.success("Patient deleted successfully!");
+      message.success(t("patientDeleted"));
       queryClient.invalidateQueries(["patients"]);
     },
     onError: () => {
-      message.error("An error occurred while deleting the patient.");
+      message.error(t("deleteError"));
     },
   });
 
@@ -47,9 +49,19 @@ const Patients = () => {
     mutationFn: (data) => axios.post("/payment/pay", data),
     onSuccess: (response) => {
       const messageText = response.data;
-      message.success(messageText);
       const match = messageText.match(/(\d+)\s*so`m\s*qoldi/i);
       const remaining = match ? parseInt(match[1], 10) : 0;
+
+      if (match) {
+        const paidMatch = messageText.match(/(\d+)\s*so`m\s*to`landi/i);
+        const paidAmount = paidMatch ? parseInt(paidMatch[1], 10) : null;
+
+        const formattedMsg = t("paymentSuccessWithRemaining", {
+          paid: paidAmount?.toLocaleString(),
+          remaining: remaining.toLocaleString(),
+        });
+        message.success(formattedMsg);
+      }
       setIsModalOpen(false);
       setSelectedPatient(null);
       form.resetFields();
@@ -58,7 +70,7 @@ const Patients = () => {
       }
     },
     onError: () => {
-      message.error("An error occurred while processing payment.");
+      message.error(t("paymentError"));
     },
   });
 
@@ -80,7 +92,7 @@ const Patients = () => {
       form.setFieldsValue({ paidValue: remaining });
     } catch (error) {
       console.error("Error fetching payment history:", error);
-      message.error("Failed to load payment history.");
+      message.error(t("loadPaymentFail"));
       setTotalPrice(0);
       setTotalPaid(0);
       setMaxDebt(0);
@@ -90,11 +102,11 @@ const Patients = () => {
 
   const handleDelete = async (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this patient?",
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      title: t("areYouSureDelete"),
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: () => deleteMutation.mutate(id),
     });
   };
@@ -120,23 +132,23 @@ const Patients = () => {
 
   const columns = [
     {
-      title: "Client Name",
+      title: t("clientName"),
       dataIndex: "patientName",
       key: "patientName",
       render: (text, record) => `${record.patientName} ${record.patientLName}`,
     },
     {
-      title: "Phone Number",
+      title: t("phoneNumber"),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Birthday",
+      title: t("birthday"),
       dataIndex: "birthDay",
       key: "birthDay",
     },
     {
-      title: "Gender",
+      title: t("gender"),
       dataIndex: "gender",
       key: "gender",
     },
@@ -145,42 +157,44 @@ const Patients = () => {
   const expandedRowRender = (record) => {
     const expandColumns = [
       {
-        title: "Date",
+        title: t("date"),
         dataIndex: "createdAt",
         key: "createdAt",
       },
       {
-        title: "Dentist Name",
+        title: t("dentistName"),
         dataIndex: "empName",
         key: "empName",
         render: (text, record) => `${record.empName} ${record.empLName}`,
       },
       {
-        title: "Services",
+        title: t("services"),
         dataIndex: "teethServiceEntities",
         key: "teethServiceEntities",
         render: (teethServiceEntities) => (
           <>
             {teethServiceEntities.map((service, index) => (
               <div key={index}>
-                {`${service.teethName}-Teeth: ${service.serviceName} (${service.price})`}
+                {`${service.teethName}-${t("tooth")}: ${service.serviceName} (${
+                  service.price
+                })`}
               </div>
             ))}
           </>
         ),
       },
       {
-        title: "Status",
+        title: t("status"),
         key: "state",
         render: (text, record) => (
           <Badge
             status={record.isServiced ? "success" : "processing"}
-            text={record.isServiced ? "Finished" : "Pending"}
+            text={record.isServiced ? t("finished") : t("Pending")}
           />
         ),
       },
       {
-        title: "Price",
+        title: t("price"),
         dataIndex: "teethServiceEntities",
         key: "price",
         render: (teethServiceEntities) =>
@@ -190,7 +204,7 @@ const Patients = () => {
           ),
       },
       {
-        title: "Action",
+        title: t("action"),
         key: "operation",
         width: "16%",
         render: (_, record) => (
@@ -206,7 +220,7 @@ const Patients = () => {
                 backgroundColor: "#18ff331e",
               }}
             >
-              Pay
+              {t("pay")}
             </a>
             <a
               className="text-red-500"
@@ -219,7 +233,7 @@ const Patients = () => {
                 backgroundColor: "#ff181809",
               }}
             >
-              Delete
+              {t("delete")}
             </a>
           </Space>
         ),
@@ -259,7 +273,7 @@ const Patients = () => {
       />
 
       <Modal
-        title="Process Payment"
+        title={t("processPayment")}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={handleOk}
@@ -273,27 +287,29 @@ const Patients = () => {
           }}
         >
           <div>
-            <strong>Total Amount:</strong> {totalPrice.toLocaleString()} so'm
+            <strong>{t("totalAmount")}:</strong> {totalPrice.toLocaleString()}{" "}
+            so'm
           </div>
           <div>
-            <strong>Paid Already:</strong> {totalPaid.toLocaleString()} so'm
+            <strong>{t("paidAlready")}:</strong> {totalPaid.toLocaleString()}{" "}
+            so'm
           </div>
           <div>
-            <strong>Remaining:</strong> {maxDebt.toLocaleString()} so'm
+            <strong>{t("remaining")}:</strong> {maxDebt.toLocaleString()} so'm
           </div>
         </div>
 
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Paid Value"
+            label={t("paidValue")}
             name="paidValue"
             rules={[
-              { required: true, message: "Please enter paid value" },
+              { required: true, message: t("pleaseEnterPaidValue") },
               {
                 validator: (_, value) =>
                   value > maxDebt
                     ? Promise.reject(
-                        new Error(`Value cannot exceed debt: ${maxDebt} so'm`)
+                        new Error(t("maxDebtExceeded", { max: maxDebt }))
                       )
                     : Promise.resolve(),
               },
@@ -306,7 +322,7 @@ const Patients = () => {
               onChange={(e) => {
                 const val = Number(e.target.value);
                 if (val > maxDebt) {
-                  message.warning(`Max allowed is ${maxDebt} so'm`);
+                  message.warning(t("maxAllowed", { max: maxDebt }));
                 }
               }}
             />

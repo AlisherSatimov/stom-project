@@ -113,5 +113,32 @@
   "fileDeleteSuccess": "File deleted successfully.",
   "fileDeleteFail": "Failed to delete file.",
   "confirmDeleteFile": "Are you sure you want to delete \"{{fileName}}\"?",
-  "notAvailable": "N/A"
+  "notAvailable": "N/A",
+
+  "clientName": "Client Name",
+  "date": "Date",
+  "dentistName": "Dentist Name",
+  "services": "Services",
+  "status": "Status",
+  "tooth": "Tooth",
+  "finished": "Finished",
+  "pending": "Pending",
+  "price": "Price",
+  "pay": "Pay",
+
+  "areYouSureDelete": "Are you sure you want to delete this patient?",
+  "processPayment": "Process Payment",
+  "totalAmount": "Total Amount",
+  "paidAlready": "Paid Already",
+  "remaining": "Remaining",
+  "paidValue": "Paid Value",
+  "pleaseEnterPaidValue": "Please enter paid value",
+  "maxDebtExceeded": "Value cannot exceed debt: {{max}} so'm",
+  "maxAllowed": "Max allowed is {{max}} so'm",
+  "patientDeleted": "Patient deleted successfully!",
+  "deleteError": "An error occurred while deleting the patient.",
+  "paymentError": "An error occurred while processing payment.",
+  "loadPaymentFail": "Failed to load payment history.",
+
+  "paymentSuccessWithRemaining": "{{paid}} UZS paid, {{remaining}} UZS remaining"
 }
