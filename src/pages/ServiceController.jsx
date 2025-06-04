@@ -3,8 +3,10 @@ import { Table, Button, Space, Modal, Form, Input, message, Spin } from "antd";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance"; // Custom axios instance
+import { useTranslation } from "react-i18next";
 
 const ServiceController = () => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal visibility
   const [isEditing, setIsEditing] = useState(false); // Edit/Add mode
   const [selectedService, setSelectedService] = useState(null); // Editing target
@@ -31,30 +33,30 @@ const ServiceController = () => {
   const deleteService = useMutation({
     mutationFn: (id) => axios.delete(`/service/passive-delete/${id}`),
     onSuccess: () => {
-      message.success("Service deleted successfully!");
+      message.success(t("serviceDeleted"));
       queryClient.invalidateQueries(["services"]);
     },
-    onError: () => message.error("Failed to delete service."),
+    onError: () => message.error(t("serviceDeleteFail")),
   });
 
   // Mutation to create a new service
   const createService = useMutation({
     mutationFn: (data) => axios.post("/service", data),
     onSuccess: () => {
-      message.success("Service created successfully!");
+      message.success(t("serviceCreated"));
       queryClient.invalidateQueries(["services"]);
     },
-    onError: () => message.error("Failed to create service."),
+    onError: () => message.error(t("serviceCreateFail")),
   });
 
   // Mutation to update a service
   const updateService = useMutation({
     mutationFn: ({ id, data }) => axios.put(`/service/${id}`, data),
     onSuccess: () => {
-      message.success("Service updated successfully!");
+      message.success(t("serviceUpdated"));
       queryClient.invalidateQueries(["services"]);
     },
-    onError: () => message.error("Failed to update service."),
+    onError: () => message.error(t("serviceUpdateFail")),
   });
 
   // Modal open for new service
@@ -79,7 +81,7 @@ const ServiceController = () => {
     const expense = Number(values.expense);
 
     if (isNaN(price) || isNaN(expense)) {
-      message.error("Price or Expense is not a valid number!");
+      message.error(t("invalidPriceOrExpense"));
       return;
     }
 
@@ -92,7 +94,7 @@ const ServiceController = () => {
     try {
       if (isEditing) {
         if (!selectedService?.id) {
-          message.error("Selected service ID not found!");
+          message.error(t("serviceIdNotFound"));
           return;
         }
 
@@ -109,18 +111,18 @@ const ServiceController = () => {
       form.resetFields();
     } catch (error) {
       console.error("Submit error:", error);
-      message.error("Service submission failed!");
+      message.error(t("serviceSubmitFail"));
     }
   };
 
   // Delete confirmation modal
   const handleDelete = (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this service?",
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      title: t("confirmDeleteService"),
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: () => deleteService.mutate(id),
     });
   };
@@ -136,32 +138,32 @@ const ServiceController = () => {
   // Define columns for Ant Design table
   const columns = [
     {
-      title: "Service Name",
+      title: t("serviceName"),
       dataIndex: "serviceName",
       key: "serviceName",
     },
     {
-      title: "Price",
+      title: t("price"),
       dataIndex: "price",
       key: "price",
       render: (value) => `${value.toLocaleString()} UZS`,
     },
     {
-      title: "Expense",
+      title: t("expense"),
       dataIndex: "expense",
       key: "expense",
       render: (value) => `${value.toLocaleString()} UZS`,
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "action",
       align: "right",
       width: 140,
       render: (_, record) => (
         <Space size="middle">
-          <Button onClick={() => handleEdit(record)}>Edit</Button>
+          <Button onClick={() => handleEdit(record)}>{t("edit")}</Button>
           <Button danger onClick={() => handleDelete(record.id)}>
-            Delete
+            {t("delete")}
           </Button>
         </Space>
       ),
@@ -172,7 +174,7 @@ const ServiceController = () => {
   if (isLoading) return <Spin spinning={true} />;
 
   // Render error state
-  if (isError) return message.error("Failed to load services.");
+  if (isError) return message.error(t("loadServicesFail"));
 
   return (
     <div>
@@ -181,36 +183,38 @@ const ServiceController = () => {
         onClick={handleAddService}
         style={{ float: "right", marginBottom: "16px" }}
       >
-        Add Service
+        {t("addService")}
       </Button>
 
       <Table columns={columns} dataSource={services} rowKey="id" />
 
       <Modal
-        title={isEditing ? "Edit Service" : "Add Service"}
+        title={isEditing ? t("editService") : t("addService")}
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         onOk={handleOk}
+        okText={t("yes")}
+        cancelText={t("no")}
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Service Name"
+            label={t("serviceName")}
             name="serviceName"
-            rules={[{ required: true, message: "Please enter service name" }]}
+            rules={[{ required: true, message: t("pleaseEnterServiceName") }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Price"
+            label={t("price")}
             name="price"
-            rules={[{ required: true, message: "Please enter price" }]}
+            rules={[{ required: true, message: t("pleaseEnterPrice") }]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
-            label="Expense"
+            label={t("expense")}
             name="expense"
-            rules={[{ required: true, message: "Please enter expense" }]}
+            rules={[{ required: true, message: t("pleaseEnterExpense") }]}
           >
             <Input type="number" />
           </Form.Item>

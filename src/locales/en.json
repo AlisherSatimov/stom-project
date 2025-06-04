@@ -140,5 +140,27 @@
   "paymentError": "An error occurred while processing payment.",
   "loadPaymentFail": "Failed to load payment history.",
 
-  "paymentSuccessWithRemaining": "{{paid}} UZS paid, {{remaining}} UZS remaining"
+  "paymentSuccessWithRemaining": "{{paid}} UZS paid, {{remaining}} UZS remaining",
+
+  "serviceName": "Service Name",
+  "expense": "Expense",
+  "edit": "Edit",
+
+  "addService": "Add Service",
+  "editService": "Edit Service",
+  "deleteService": "Delete Service",
+  "serviceCreated": "Service created successfully!",
+  "serviceUpdated": "Service updated successfully!",
+  "serviceDeleted": "Service deleted successfully!",
+  "serviceCreateFail": "Failed to create service.",
+  "serviceUpdateFail": "Failed to update service.",
+  "serviceDeleteFail": "Failed to delete service.",
+  "serviceSubmitFail": "Service submission failed!",
+  "loadServicesFail": "Failed to load services.",
+  "confirmDeleteService": "Are you sure you want to delete this service?",
+  "pleaseEnterServiceName": "Please enter service name",
+  "pleaseEnterPrice": "Please enter price",
+  "pleaseEnterExpense": "Please enter expense",
+  "invalidPriceOrExpense": "Price or expense is not a valid number",
+  "serviceIdNotFound": "Selected service ID not found!"
 }

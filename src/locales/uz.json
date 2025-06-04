@@ -140,5 +140,26 @@
   "paymentError": "To‘lovni amalga oshirishda xatolik yuz berdi.",
   "loadPaymentFail": "To‘lov tarixi yuklanmadi.",
 
-  "paymentSuccessWithRemaining": "{{paid}} so'm to'landi, {{remaining}} so'm qoldi"
+  "paymentSuccessWithRemaining": "{{paid}} so'm to'landi, {{remaining}} so'm qoldi",
+
+  "serviceName": "Xizmat nomi",
+  "expense": "Xarajat",
+  "addService": "Yangi xizmat qo‘shish",
+  "editService": "Xizmatni tahrirlash",
+  "deleteService": "Xizmatni o‘chirish",
+  "serviceCreated": "Xizmat muvaffaqiyatli yaratildi!",
+  "serviceUpdated": "Xizmat muvaffaqiyatli yangilandi!",
+  "serviceDeleted": "Xizmat muvaffaqiyatli o‘chirildi!",
+  "serviceCreateFail": "Xizmat yaratishda xatolik yuz berdi.",
+  "serviceUpdateFail": "Xizmatni yangilashda xatolik yuz berdi.",
+  "serviceDeleteFail": "Xizmatni o‘chirishda xatolik yuz berdi.",
+  "serviceSubmitFail": "Xizmatni saqlashda xatolik yuz berdi.",
+  "loadServicesFail": "Xizmatlar ro‘yxatini yuklashda xatolik.",
+  "confirmDeleteService": "Ushbu xizmatni o‘chirmoqchimisiz?",
+  "edit": "Tahrirlash",
+  "pleaseEnterServiceName": "Iltimos, xizmat nomini kiriting",
+  "pleaseEnterPrice": "Iltimos, narxni kiriting",
+  "pleaseEnterExpense": "Iltimos, xarajatni kiriting",
+  "invalidPriceOrExpense": "Narx yoki xarajat noto‘g‘ri son",
+  "serviceIdNotFound": "Xizmat ID topilmadi!"
 }

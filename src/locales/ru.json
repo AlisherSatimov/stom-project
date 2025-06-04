@@ -140,5 +140,26 @@
   "paymentError": "Ошибка при обработке платежа.",
   "loadPaymentFail": "Не удалось загрузить историю платежей.",
 
-  "paymentSuccessWithRemaining": "{{paid}} сум оплачено, осталось {{remaining}} сум"
+  "paymentSuccessWithRemaining": "{{paid}} сум оплачено, осталось {{remaining}} сум",
+
+  "serviceName": "Название услуги",
+  "expense": "Расход",
+  "addService": "Добавить услугу",
+  "editService": "Редактировать услугу",
+  "deleteService": "Удалить услугу",
+  "serviceCreated": "Услуга успешно создана!",
+  "serviceUpdated": "Услуга успешно обновлена!",
+  "serviceDeleted": "Услуга успешно удалена!",
+  "serviceCreateFail": "Ошибка при создании услуги.",
+  "serviceUpdateFail": "Ошибка при обновлении услуги.",
+  "serviceDeleteFail": "Ошибка при удалении услуги.",
+  "serviceSubmitFail": "Ошибка при сохранении услуги!",
+  "loadServicesFail": "Не удалось загрузить услуги.",
+  "confirmDeleteService": "Вы уверены, что хотите удалить эту услугу?",
+  "edit": "Редактировать",
+  "pleaseEnterServiceName": "Пожалуйста, введите название услуги",
+  "pleaseEnterPrice": "Пожалуйста, введите цену",
+  "pleaseEnterExpense": "Пожалуйста, введите расход",
+  "invalidPriceOrExpense": "Цена или расход указаны некорректно",
+  "serviceIdNotFound": "ID выбранной услуги не найден!"
 }
