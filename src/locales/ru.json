@@ -213,5 +213,15 @@
     "Oct": "Окт",
     "Nov": "Ноя",
     "Dec": "Дек"
-  }
+  },
+
+  "confirmDeleteEmployee": "Вы уверены, что хотите удалить этого сотрудника?",
+  "employeeDeleted": "Сотрудник успешно удален!",
+  "employeeDeleteError": "Ошибка при удалении сотрудника.",
+
+  "role_admin": "Админ",
+  "role_moderator": "Менеджер",
+  "role_user": "Стоматолог",
+
+  "fetchEmployeesError": "Ошибка при получении сотрудников"
 }

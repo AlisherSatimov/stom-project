@@ -213,5 +213,15 @@
     "Oct": "Okt",
     "Nov": "Noy",
     "Dec": "Dek"
-  }
+  },
+
+  "confirmDeleteEmployee": "Ushbu xodimni o‘chirmoqchimisiz?",
+  "employeeDeleted": "Xodim muvaffaqiyatli o‘chirildi!",
+  "employeeDeleteError": "Xodimni o‘chirishda xatolik yuz berdi.",
+
+  "role_admin": "Admin",
+  "role_moderator": "Menejer",
+  "role_user": "Tish shifokori",
+
+  "fetchEmployeesError": "Xodimlarni olishda xatolik yuz berdi"
 }

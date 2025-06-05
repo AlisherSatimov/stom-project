@@ -7,16 +7,18 @@ import { useNavigate } from "react-router-dom";
 import { useEmployee } from "../context/EmployeeContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "../utils/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 // Fetch function to retrieve all employees
 const fetchEmployees = async () => {
   const response = await axios.get("/employees");
-  if (response.status !== 200) throw new Error("Failed to fetch employees");
+  if (response.status !== 200) throw new Error(t("fetchEmployeesError"));
   return response.data;
 };
 
 // Main Employees component
 const Employees = () => {
+  const { t } = useTranslation();
   // Global query client instance
   const queryClient = useQueryClient();
 
@@ -51,22 +53,22 @@ const Employees = () => {
     mutationFn: async (id) =>
       await axios.delete(`/employees/passive-delete/${id}`),
     onSuccess: () => {
-      message.success("Employee deleted successfully!");
+      message.success(t("employeeDeleted"));
       queryClient.invalidateQueries(["employees"]); // Refetch employees after deletion
     },
     onError: () => {
-      message.error("An error occurred while deleting the employee.");
+      message.error(t("employeeDeleteError"));
     },
   });
 
   // Confirm delete dialog and mutation trigger
   const handleDelete = (id) => {
     Modal.confirm({
-      title: "Are you sure you want to delete this employee?",
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      title: t("confirmDeleteEmployee"),
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: () => deleteMutation.mutate(id),
     });
   };
@@ -93,7 +95,8 @@ const Employees = () => {
       <div style={{ padding: 8 }}>
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          // placeholder={`Search ${dataIndex}`}
+          placeholder={t("searchPlaceholder", { field: t(dataIndex) })}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -109,14 +112,14 @@ const Employees = () => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            {t("search")}
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{ width: 90 }}
           >
-            Reset
+            {t("reset")}
           </Button>
         </Space>
       </div>
@@ -142,51 +145,52 @@ const Employees = () => {
   // Table columns
   const columns = [
     {
-      title: "First Name",
+      title: t("firstName"),
       dataIndex: "firstName",
       key: "firstName",
       ...getColumnSearchProps("firstName"),
     },
     {
-      title: "Last Name",
+      title: t("lastName"),
       dataIndex: "lastName",
       key: "lastName",
       ...getColumnSearchProps("lastName"),
     },
     {
-      title: "Phone Number",
+      title: t("phoneNumber"),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
     },
     {
-      title: "Email",
+      title: t("email"),
       dataIndex: "email",
       key: "email",
     },
     {
-      title: "Role",
+      title: t("role"),
       dataIndex: "role",
       key: "role",
       filters: [
-        { text: "Admin", value: "ROLE_ADMIN" },
-        { text: "Moderator", value: "ROLE_MODERATOR" },
-        { text: "User", value: "ROLE_USER" },
+        { text: t("admin"), value: "ROLE_ADMIN" },
+        { text: t("manager"), value: "ROLE_MODERATOR" },
+        { text: t("dentist"), value: "ROLE_USER" },
       ],
       onFilter: (value, record) => record.role === value,
       render: (role) => {
         let color = "green";
         if (role === "ROLE_ADMIN") color = "volcano";
         else if (role === "ROLE_MODERATOR") color = "geekblue";
-        return <Tag color={color}>{role.replace("ROLE_", "")}</Tag>;
+        // return <Tag color={color}>{t(`${role.replace("ROLE_", "")}`)}</Tag>;
+        return <Tag color={color}>{t(role.toLowerCase()).toUpperCase()}</Tag>;
       },
     },
     {
-      title: "Action",
+      title: t("action"),
       key: "operation",
       render: (_, record) => (
         <Space size="middle">
           <Button type="primary" danger onClick={() => handleDelete(record.id)}>
-            Delete
+            {t("delete")}
           </Button>
         </Space>
       ),
@@ -200,6 +204,10 @@ const Employees = () => {
         columns={columns}
         dataSource={employees || []}
         rowKey="id"
+        locale={{
+          filterConfirm: t("yes"),
+          filterReset: t("reset"),
+        }}
         onRow={(record) => ({
           onClick: (e) => {
             const target = e.target;

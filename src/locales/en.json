@@ -214,5 +214,15 @@
     "Oct": "Oct",
     "Nov": "Nov",
     "Dec": "Dec"
-  }
+  },
+
+  "confirmDeleteEmployee": "Are you sure you want to delete this employee?",
+  "employeeDeleted": "Employee deleted successfully!",
+  "employeeDeleteError": "An error occurred while deleting the employee.",
+
+  "role_admin": "Admin",
+  "role_moderator": "Manager",
+  "role_user": "Dentist",
+
+  "fetchEmployeesError": "Failed to fetch employees"
 }
