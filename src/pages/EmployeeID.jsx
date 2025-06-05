@@ -326,7 +326,7 @@ const EmployeeID = () => {
                     title: "Expense",
                     dataIndex: "expense",
                     render: (value) =>
-                      value ? value + ` ${CURRENCY}` : ` ${CURRENCY}`,
+                      value ? value + ` ${CURRENCY}` : `0 ${CURRENCY}`,
                   },
                 ]}
                 onRow={(record) => ({
