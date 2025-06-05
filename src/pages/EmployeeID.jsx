@@ -21,6 +21,7 @@ import {
 import { UserOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import axios from "../utils/axiosInstance";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -28,6 +29,7 @@ const { Option } = Select;
 const { confirm } = Modal;
 
 const EmployeeID = () => {
+  const { t } = useTranslation();
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const [employeeData, setEmployeeData] = useState(null);
@@ -49,8 +51,6 @@ const EmployeeID = () => {
     percent: 0,
     dentistShare: 0,
   });
-
-  const CURRENCY = "so'm";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +74,7 @@ const EmployeeID = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-        message.error("Failed to fetch employee or patient data.");
+        message.error(t("failedFetch"));
       } finally {
         setLoading(false);
       }
@@ -102,24 +102,24 @@ const EmployeeID = () => {
       );
 
       if (response.status === 200) {
-        message.success("Employee updated successfully!");
+        message.success(t("updateSuccess"));
         setEmployeeData((prev) => ({ ...prev, ...updatedValues }));
         setIsModalOpen(false);
       }
     } catch (error) {
       console.error("Error updating employee:", error);
-      message.error("Failed to update employee.");
+      message.error(t("updateError"));
     }
   };
 
   const handleDeleteEmployee = () => {
     confirm({
-      title: "Are you sure you want to delete this employee?",
+      title: t("confirmDeleteEmployee"),
       icon: <ExclamationCircleOutlined />,
-      content: "This action cannot be undone.",
-      okText: "Yes",
+      content: t("cannotBeUndone"),
+      okText: t("yes"),
       okType: "danger",
-      cancelText: "No",
+      cancelText: t("no"),
       onOk: async () => {
         try {
           const response = await axios.delete(
@@ -131,12 +131,12 @@ const EmployeeID = () => {
             }
           );
           if (response.status === 200) {
-            message.success("Employee deleted successfully!");
+            message.success(t("deleteSuccess"));
             navigate("/admin/employees");
           }
         } catch (error) {
           console.error("Delete error:", error);
-          message.error("Failed to delete employee.");
+          message.error(t("employeeDeleteError"));
         }
       },
     });
@@ -149,7 +149,7 @@ const EmployeeID = () => {
 
   const handleReportCalculation = () => {
     if (!startDate || !endDate) {
-      return message.warning("Please, select two date");
+      return message.warning(t("pleaseSelectTwoDates"));
     }
 
     const start = new Date(startDate);
@@ -225,7 +225,7 @@ const EmployeeID = () => {
       <Layout style={{ minHeight: "100vh" }}>
         <Content style={{ textAlign: "center", marginTop: "50px" }}>
           <Typography.Text type="danger">
-            Employee data could not be found!
+            {t("employeeNotFound")}
           </Typography.Text>
         </Content>
       </Layout>
@@ -257,10 +257,10 @@ const EmployeeID = () => {
               }
               actions={[
                 <Button type="primary" onClick={() => setIsModalOpen(true)}>
-                  Edit Info
+                  {t("editInfo")}
                 </Button>,
                 <Button danger onClick={handleDeleteEmployee}>
-                  Delete Employee
+                  {t("deleteEmployee")}
                 </Button>,
               ]}
             >
@@ -271,25 +271,25 @@ const EmployeeID = () => {
                 {`${employeeData.firstName} ${employeeData.lastName}`}
               </Title>
               <Descriptions bordered column={1}>
-                <Descriptions.Item label="Patronymic">
+                <Descriptions.Item label={t("patronymic")}>
                   {employeeData.patronymic}
                 </Descriptions.Item>
-                <Descriptions.Item label="Login">
+                <Descriptions.Item label={t("login")}>
                   {employeeData.login}
                 </Descriptions.Item>
-                <Descriptions.Item label="Email">
+                <Descriptions.Item label={t("email")}>
                   {employeeData.email}
                 </Descriptions.Item>
-                <Descriptions.Item label="Phone Number">
+                <Descriptions.Item label={t("phoneNumber")}>
                   {employeeData.phoneNumber}
                 </Descriptions.Item>
-                <Descriptions.Item label="Role">
+                <Descriptions.Item label={t("role")}>
                   {employeeData.role.replace("ROLE_", "")}
                 </Descriptions.Item>
-                <Descriptions.Item label="BirthDay">
+                <Descriptions.Item label={t("birthday")}>
                   {employeeData.birthDay}
                 </Descriptions.Item>
-                <Descriptions.Item label="Address">
+                <Descriptions.Item label={t("address")}>
                   {employeeData.address}
                 </Descriptions.Item>
               </Descriptions>
@@ -299,34 +299,36 @@ const EmployeeID = () => {
           {employeeData.role === "ROLE_USER" && (
             <Col xs={24} md={12}>
               <Title level={4} style={{ marginBottom: 16 }}>
-                Davolangan bemorlar
+                {t("treatedPatients")}
               </Title>
               <Table
                 dataSource={patients}
                 rowKey="id"
                 columns={[
                   {
-                    title: "Full Name",
+                    title: t("fullName"),
                     render: (text, record) =>
                       `${record.patientName} ${record.patientLName}`,
                   },
                   {
-                    title: "Date",
+                    title: t("date"),
                     dataIndex: "createdAt",
                   },
                   {
-                    title: "Income",
+                    title: t("income"),
                     render: (text, record) =>
                       record.teethServiceEntities.reduce(
                         (sum, s) => sum + s.price,
                         0
-                      ) + ` ${CURRENCY}`,
+                      ) + ` ${t("currency")}`,
                   },
                   {
-                    title: "Expense",
+                    title: t("expense"),
                     dataIndex: "expense",
                     render: (value) =>
-                      value ? value + ` ${CURRENCY}` : `0 ${CURRENCY}`,
+                      value
+                        ? value + ` ${t("currency")}`
+                        : `0 ${t("currency")}`,
                   },
                 ]}
                 onRow={(record) => ({
@@ -337,7 +339,7 @@ const EmployeeID = () => {
           )}
         </Row>
         <Modal
-          title="Edit Employee Information"
+          title={t("editEmployeeInfo")}
           open={isModalOpen}
           onCancel={() => setIsModalOpen(false)}
           onOk={() => {
@@ -350,55 +352,74 @@ const EmployeeID = () => {
           <Form layout="vertical" form={form}>
             <Form.Item
               name="firstName"
-              label="First Name"
-              rules={[{ required: true, message: "Please enter first name" }]}
+              label={t("firstName")}
+              rules={[{ required: true, message: t("pleaseEnterFirstName") }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="lastName"
-              label="Last Name"
-              rules={[{ required: true, message: "Please enter last name" }]}
+              label={t("lastName")}
+              rules={[{ required: true, message: t("pleaseEnterLastName") }]}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item name="patronymic" label="Patronymic">
+            <Form.Item
+              name="patronymic"
+              label={t("patronymic")}
+              rules={[{ required: true, message: t("pleaseEnterPatronymic") }]}
+            >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="login"
-              label="Login"
-              rules={[{ required: true, message: "Please enter login" }]}
+              label={t("login")}
+              rules={[{ required: true, message: t("pleaseEnterLogin") }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="password"
-              label="Password"
-              rules={[{ required: true, message: "Please enter password" }]}
+              label={t("password")}
+              rules={[{ required: true, message: t("pleaseEnterPassword") }]}
             >
               <Input.Password />
             </Form.Item>
 
             <Form.Item
               name="email"
-              label="Email"
-              rules={[{ type: "email", message: "Please enter a valid email" }]}
+              label={t("email")}
+              rules={[
+                {
+                  type: "email",
+                  required: true,
+                  message: t("pleaseEnterValidEmail"),
+                },
+              ]}
             >
               <Input />
             </Form.Item>
 
-            <Form.Item name="phoneNumber" label="Phone Number">
+            <Form.Item
+              name="phoneNumber"
+              label={t("phoneNumber")}
+              rules={[
+                {
+                  required: true,
+                  message: t("pleaseEnterPhoneNumber"),
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="birthDay"
-              label="BirthDay"
+              label={t("birthday")}
               rules={[{ required: false }]}
             >
               <DatePicker
@@ -408,25 +429,29 @@ const EmployeeID = () => {
               />
             </Form.Item>
 
-            <Form.Item name="address" label="Address">
+            <Form.Item
+              name="address"
+              label={t("address")}
+              rules={[{ required: true, message: t("pleaseEnterAddress") }]}
+            >
               <Input />
             </Form.Item>
 
             <Form.Item
               name="role"
-              label="Role"
-              rules={[{ required: true, message: "Please select a role" }]}
+              label={t("role")}
+              rules={[{ required: true, message: t("pleaseSelectRole") }]}
             >
               <Select>
-                <Option value="ROLE_USER">User</Option>
-                <Option value="ROLE_ADMIN">Admin</Option>
-                <Option value="ROLE_MODERATOR">Moderator</Option>
+                <Option value="ROLE_USER">{t("dentist")}</Option>
+                <Option value="ROLE_ADMIN">{t("admin")}</Option>
+                <Option value="ROLE_MODERATOR">{t("manager")}</Option>
               </Select>
             </Form.Item>
           </Form>
         </Modal>
         <Modal
-          title="Service Details"
+          title={t("serviceDetails")}
           open={isServiceModalOpen}
           onCancel={() => setIsServiceModalOpen(false)}
           footer={null}
@@ -435,21 +460,22 @@ const EmployeeID = () => {
             <ul>
               {selectedPatientServices.map((item, index) => (
                 <li key={index}>
-                  Tish {item.teethName}: {item.serviceName} – {item.price} so'm
+                  {t("tooth")}-{item.teethName}: {item.serviceName} –{" "}
+                  {item.price} {t("currency")}
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No services provided.</p>
+            <p>{t("noServices")}</p>
           )}
         </Modal>
 
         {employeeData.role === "ROLE_USER" && (
-          <Card title="🧾 Report" style={{ marginTop: 40 }}>
+          <Card title={t("report")} style={{ marginTop: 40 }}>
             <Row gutter={16} style={{ marginBottom: 24 }}>
               <Col span={6}>
                 <div style={{ fontWeight: "bold", marginBottom: 4 }}>
-                  Date range
+                  {t("dateRange")}
                 </div>
                 <div style={{ display: "flex", gap: "8px" }}>
                   <Input
@@ -468,7 +494,7 @@ const EmployeeID = () => {
               </Col>
               <Col span={6} style={{ display: "flex", alignItems: "flex-end" }}>
                 <Button type="primary" onClick={handleReportCalculation}>
-                  Report calculation
+                  {t("reportCalc")}
                 </Button>
               </Col>
               <Col
@@ -483,7 +509,7 @@ const EmployeeID = () => {
                     marginLeft: 95,
                   }}
                 >
-                  For dentist
+                  {t("forDentist")}
                 </div>
                 <div style={{ display: "flex", gap: "8px" }}>
                   <Input
@@ -515,7 +541,7 @@ const EmployeeID = () => {
                   backgroundColor: "#f0f5ff",
                 }}
               >
-                👥 <div>Total patients</div>
+                👥 <div>{t("totalPatients")}</div>
                 <strong>{reportStats.totalPatients}</strong>
               </Card>
 
@@ -526,8 +552,10 @@ const EmployeeID = () => {
                   backgroundColor: "#f6ffed",
                 }}
               >
-                💰 <div>Income</div>
-                <strong>{reportStats.totalIncome} so'm</strong>
+                💰 <div>{t("income")}</div>
+                <strong>
+                  {reportStats.totalIncome} {t("currency")}
+                </strong>
               </Card>
 
               <Card
@@ -537,8 +565,10 @@ const EmployeeID = () => {
                   backgroundColor: "#fffbe6",
                 }}
               >
-                💸 <div>Costs</div>
-                <strong>{reportStats.totalExpense} so'm</strong>
+                💸 <div>{t("expense")}</div>
+                <strong>
+                  {reportStats.totalExpense} {t("currency")}
+                </strong>
               </Card>
 
               <Card
@@ -548,8 +578,10 @@ const EmployeeID = () => {
                   backgroundColor: "#fff0f6",
                 }}
               >
-                📈 <div>Net profit</div>
-                <strong>{reportStats.netProfit} so'm</strong>
+                📈 <div>{t("netProfit")}</div>
+                <strong>
+                  {reportStats.netProfit} {t("currency")}
+                </strong>
               </Card>
 
               <Card
@@ -559,8 +591,10 @@ const EmployeeID = () => {
                   backgroundColor: "#e6fffb",
                 }}
               >
-                🎯 <div>Dentist salary</div>
-                <strong>{Math.round(reportStats.dentistShare)} so'm</strong>
+                🎯 <div>{t("dentistSalary")}</div>
+                <strong>
+                  {Math.round(reportStats.dentistShare)} {t("currency")}
+                </strong>
               </Card>
             </div>
           </Card>

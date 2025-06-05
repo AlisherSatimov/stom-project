@@ -224,5 +224,30 @@
   "role_moderator": "Manager",
   "role_user": "Dentist",
 
-  "fetchEmployeesError": "Failed to fetch employees"
+  "fetchEmployeesError": "Failed to fetch employees",
+
+  "treatedPatients": "Treated patients",
+  "editInfo": "Edit Info",
+  "deleteEmployee": "Delete Employee",
+  "employeeNotFound": "Employee data could not be found!",
+  "fullName": "Full Name",
+  "editEmployeeInfo": "Edit Employee Information",
+
+  "serviceDetails": "Service Details",
+  "noServices": "No services provided.",
+  "report": "🧾 Report",
+  "dateRange": "Date range",
+  "reportCalc": "Report calculation",
+  "forDentist": "For dentist",
+  "totalPatients": "Total patients",
+  "netProfit": "Net profit",
+  "dentistSalary": "Dentist salary",
+  "failedFetch": "Failed to fetch employee or patient data.",
+  "updateSuccess": "Employee updated successfully!",
+  "updateError": "Failed to update employee.",
+  "confirmDelete": "Are you sure you want to delete this employee?",
+  "deleteSuccess": "Employee deleted successfully!",
+  "pleaseSelectTwoDates": "Please, select two date",
+
+  "currency": "uzs"
 }

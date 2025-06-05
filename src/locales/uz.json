@@ -223,5 +223,28 @@
   "role_moderator": "Menejer",
   "role_user": "Tish shifokori",
 
-  "fetchEmployeesError": "Xodimlarni olishda xatolik yuz berdi"
+  "fetchEmployeesError": "Xodimlarni olishda xatolik yuz berdi",
+
+  "treatedPatients": "Davolangan bemorlar",
+  "editInfo": "Ma'lumotni tahrirlash",
+  "deleteEmployee": "Xodimni o'chirish",
+  "employeeNotFound": "Xodim ma'lumotlari topilmadi!",
+  "fullName": "To‘liq ism",
+  "editEmployeeInfo": "Xodim ma'lumotlarini tahrirlash",
+  "serviceDetails": "Xizmatlar tafsiloti",
+  "noServices": "Xizmatlar mavjud emas.",
+  "report": "🧾 Hisobot",
+  "dateRange": "Sana oralig‘i",
+  "reportCalc": "Hisobotni hisoblash",
+  "forDentist": "Shifokor ulushi",
+  "totalPatients": "Bemorlar soni",
+  "netProfit": "Sof foyda",
+  "dentistSalary": "Shifokor maoshi",
+  "failedFetch": "Xodim yoki bemor ma'lumotlarini olishda xatolik.",
+  "updateSuccess": "Xodim ma'lumotlari yangilandi!",
+  "updateError": "Xodim ma'lumotlarini yangilashda xatolik.",
+  "confirmDelete": "Ushbu xodimni o‘chirishni istaysizmi?",
+  "deleteSuccess": "Xodim muvaffaqiyatli o‘chirildi!",
+  "pleaseSelectTwoDates": "Iltimos, ikkita sana tanlang",
+  "currency": "so'm"
 }
