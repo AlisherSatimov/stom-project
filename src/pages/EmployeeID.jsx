@@ -317,18 +317,15 @@ const EmployeeID = () => {
                   {
                     title: t("income"),
                     render: (text, record) =>
-                      record.teethServiceEntities.reduce(
-                        (sum, s) => sum + s.price,
-                        0
-                      ) + ` ${t("currency")}`,
+                      record.teethServiceEntities
+                        .reduce((sum, s) => sum + s.price, 0)
+                        .toLocaleString() + ` ${t("currency")}`,
                   },
                   {
                     title: t("expense"),
                     dataIndex: "expense",
                     render: (value) =>
-                      value
-                        ? value + ` ${t("currency")}`
-                        : `0 ${t("currency")}`,
+                      (value || 0).toLocaleString() + ` ${t("currency")}`,
                   },
                 ]}
                 onRow={(record) => ({
@@ -554,7 +551,7 @@ const EmployeeID = () => {
               >
                 💰 <div>{t("income")}</div>
                 <strong>
-                  {reportStats.totalIncome} {t("currency")}
+                  {reportStats.totalIncome.toLocaleString()} {t("currency")}
                 </strong>
               </Card>
 
@@ -567,7 +564,7 @@ const EmployeeID = () => {
               >
                 💸 <div>{t("expense")}</div>
                 <strong>
-                  {reportStats.totalExpense} {t("currency")}
+                  {reportStats.totalExpense.toLocaleString()} {t("currency")}
                 </strong>
               </Card>
 
@@ -580,7 +577,7 @@ const EmployeeID = () => {
               >
                 📈 <div>{t("netProfit")}</div>
                 <strong>
-                  {reportStats.netProfit} {t("currency")}
+                  {reportStats.netProfit.toLocaleString()} {t("currency")}
                 </strong>
               </Card>
 
@@ -593,7 +590,8 @@ const EmployeeID = () => {
               >
                 🎯 <div>{t("dentistSalary")}</div>
                 <strong>
-                  {Math.round(reportStats.dentistShare)} {t("currency")}
+                  {Math.round(reportStats.dentistShare).toLocaleString()}{" "}
+                  {t("currency")}
                 </strong>
               </Card>
             </div>
